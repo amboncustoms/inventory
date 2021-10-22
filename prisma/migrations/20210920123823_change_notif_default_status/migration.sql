@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "notifs" ALTER COLUMN "status" SET DEFAULT E'NOTHING';
