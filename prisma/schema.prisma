@@ -128,7 +128,9 @@ model IncartDetail {
   productName     String  @map("product_name") @db.VarChar(255)
   productCategory String  @map("product_category") @db.VarChar(255)
   productQuantity Int     @map("product_quantity")
+  productIncart   Int     @map("product_incart")
   productCode     String  @map("product_code")
+  productId       String  @map("product_id")
   incart          Incart? @relation(fields: [incartId], references: [id])
   incartId        String? @map("incart_id")
 
@@ -190,7 +192,7 @@ enum Status {
   REJECTED
   NOTHING // digunakan ketika notif membutuhkan tindak lanjut baik approve maupun reject
   READY // digunakan ketika RT sudah menyaiapkan barang dan info ke user
-  INSTRUCTION // ketka notifikasi diajukan oleh KSBU ke RT maka dari PURE menjadi INSTRUCTION
+  INSTRUCTION // ketika notifikasi diajukan oleh KSBU ke RT maka dari PURE menjadi INSTRUCTION
   PURE // digunakan ketika notif hanya bertujuan untuk pemberitahuan dan tidak ada tindak lanjut apapun
 }
 

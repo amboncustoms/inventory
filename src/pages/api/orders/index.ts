@@ -6,7 +6,7 @@ import prisma from 'db';
 const monthName = ['jan', 'feb', 'mar', 'apr', 'mei', 'jun', 'jul', 'agu', 'sep', 'okt', 'nov', 'des'];
 
 interface IOrder {
-  products: [{ productId: string | null; quantity: number | null }];
+  products: [{ productId: string | null; incart: number | null }];
 }
 
 type Num = {
@@ -122,10 +122,10 @@ export default handler()
             const farthest1 = myproduct.stocks
               .filter((v) => v.quantity !== 0)
               .reduce((a, b) => (a.createdAt < b.createdAt ? a : b));
-            if (farthest1.quantity >= p.quantity) {
+            if (farthest1.quantity >= p.incart) {
               const updated = prisma.stock.update({
                 where: { id: farthest1.id },
-                data: { quantity: farthest1.quantity - p.quantity },
+                data: { quantity: farthest1.quantity - p.incart },
               });
               await prisma.$transaction([updated]).then(() => updateLatestQuantity(myproduct.id));
               return;
@@ -134,7 +134,7 @@ export default handler()
               where: { id: farthest1.id },
               data: { quantity: farthest1.quantity - farthest1.quantity },
             });
-            setDifferenceValue(p.quantity - farthest1.quantity);
+            setDifferenceValue(p.incart - farthest1.quantity);
             await prisma.$transaction([updated]).then(() => {
               updateLatestQuantity(myproduct.id);
               start();
@@ -147,7 +147,7 @@ export default handler()
           data: {
             productId: product.id,
             price: latestProduct.price,
-            quantity: p.quantity,
+            quantity: p.incart,
             userId,
             category: product.category.title,
             createdMonth: monthName[getMonth(new Date())],
@@ -159,7 +159,7 @@ export default handler()
             productName: product.name,
             productCode: product.code,
             productCategory: product.category.title,
-            productQuantity: p.quantity,
+            productQuantity: p.incart,
             orderId: (await order).id,
           },
         });

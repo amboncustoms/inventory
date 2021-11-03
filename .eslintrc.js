@@ -48,6 +48,9 @@ module.exports = {
     'jsx-a11y/anchor-is-valid': 'off',
     'react/require-default-props': 'off',
     'react-hooks/rules-of-hooks': 'off',
+    'no-nested-ternary': 'off',
+    'react-hooks/exhaustive-deps': 'off',
+    'consistent-return': 'off',
     'import/order': [
       'error',
       {

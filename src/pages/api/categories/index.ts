@@ -1,12 +1,12 @@
 import handler from '@src/helpers/handler';
-// import auth from '@src/middlewares/auth';
+import auth from '@src/middlewares/auth';
 import validate from '@src/middlewares/validate';
 import { categorySchema } from '@src/utils/validation_schema';
 import prisma from 'db';
 import { Prisma } from '.prisma/client';
 
 export default handler()
-  // .use(auth)
+  .use(auth)
   .use(validate(categorySchema))
   .post(async (req, res) => {
     const { title }: Prisma.CategoryCreateInput = req.body;

@@ -11,10 +11,10 @@ export default handler()
     const { activeStep, allowAddToCart, userId: userIdByAdmin }: Rule = req.body;
     const { userId, role } = req.user;
     try {
-      if (role === 'KSBU') {
+      if (role !== 'USER') {
         const rule = await prisma.rule.findFirst({
           where: {
-            userId: userIdByAdmin,
+            userId: userIdByAdmin || userId,
           },
         });
         const updatedRule = await prisma.rule.update({

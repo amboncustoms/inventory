@@ -1,4 +1,4 @@
-import React, { useState, FC } from 'react';
+import React, { useState, FC, useContext } from 'react';
 import {
   FeaturedPlayList as FeaturedPlayListIcon,
   AllInbox as AllInboxIcon,
@@ -13,17 +13,27 @@ import {
   CssBaseline,
   Divider,
   Drawer,
-  IconButton,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
   Toolbar,
   Typography,
-  Badge,
+  Popper,
+  Fade,
+  Paper,
 } from '@mui/material';
+import axios from 'axios';
+import { GetServerSideProps } from 'next';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { dehydrate, QueryClient, useQuery } from 'react-query';
+import { CartContext } from '@src/contexts/cart';
+import Notification from './notif';
+
+const IconButton = dynamic(() => import('@mui/material/IconButton'), { ssr: false });
+const Badge = dynamic(() => import('@mui/material/Badge'), { ssr: false });
 
 const drawerWidth = 240;
 
@@ -32,15 +42,31 @@ interface Props {
   children: React.ReactNode;
 }
 
+const getNotifs = async () => {
+  const { data } = await axios.get('/api/notifs');
+  return data;
+};
+
 const CustomDrawer: FC<Props> = (props) => {
+  const { data: notifs, isSuccess } = useQuery('notifs', getNotifs, {
+    staleTime: 3000,
+  });
   const router = useRouter();
   const { window, children } = props;
   const container = window !== undefined ? () => window().document.body : undefined;
+  const { incartTotal } = useContext(CartContext);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [openPopper, setOpenPopper] = useState(false);
+  const popperHandler = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+    setOpenPopper((prev) => !prev);
+  };
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
+  const popperId = openPopper ? 'notif-popper' : undefined;
 
   const getListStyle = (pathname: string) => {
     const isActive = router.pathname === pathname;
@@ -158,17 +184,49 @@ const CustomDrawer: FC<Props> = (props) => {
                 alignItems: 'center',
               }}
             >
-              <IconButton aria-label="show 17 new notifications" color="inherit">
-                <Badge badgeContent={5} color="secondary">
+              <IconButton color="inherit" onClick={popperHandler}>
+                {isSuccess && notifs?.length === 0 ? (
                   <NotificationsIcon color="primary" />
-                </Badge>
+                ) : (
+                  <Badge badgeContent={notifs?.length} color="secondary">
+                    <NotificationsIcon color="primary" />
+                  </Badge>
+                )}
               </IconButton>
+              <Popper
+                id={popperId}
+                open={openPopper}
+                anchorEl={anchorEl}
+                placement="bottom-end"
+                transition
+                disablePortal
+              >
+                {({ TransitionProps }) => (
+                  <Fade {...TransitionProps} timeout={350}>
+                    <Paper
+                      style={{
+                        padding: '1rem',
+                        maxHeight: '22rem',
+                        width: '23rem',
+                        overflow: 'auto',
+                      }}
+                      elevation={5}
+                    >
+                      <Notification setOpenPopper={setOpenPopper} />
+                    </Paper>
+                  </Fade>
+                )}
+              </Popper>
               <Link href="/cart" passHref>
                 <a>
-                  <IconButton aria-label="show 4 new mails" color="inherit">
-                    <Badge badgeContent={5} color="secondary">
+                  <IconButton color="inherit">
+                    {incartTotal === 0 ? (
                       <InboxIcon color="primary" />
-                    </Badge>
+                    ) : (
+                      <Badge badgeContent={incartTotal} color="secondary">
+                        <InboxIcon color="primary" />
+                      </Badge>
+                    )}
                   </IconButton>
                 </a>
               </Link>
@@ -224,3 +282,30 @@ const CustomDrawer: FC<Props> = (props) => {
   );
 };
 export default CustomDrawer;
+
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  try {
+    const { cookie } = req.headers;
+    if (!cookie) {
+      return {
+        redirect: {
+          destination: '/login',
+          permanent: false,
+        },
+      };
+    }
+    const getServerNotifs = async () => {
+      const { data } = await axios.get('/api/notifs', { headers: { cookie } });
+      return data;
+    };
+    const queryClient = new QueryClient();
+    await queryClient.prefetchQuery('notifs', getServerNotifs);
+    return {
+      props: {
+        dehydratedState: dehydrate(queryClient),
+      },
+    };
+  } catch (err) {
+    res.writeHead(307, { Location: '/login' }).end();
+  }
+};

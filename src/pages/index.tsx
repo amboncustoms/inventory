@@ -14,7 +14,7 @@ import {
 import axios from 'axios';
 import { GetServerSideProps } from 'next';
 import { dehydrate, QueryClient, useQuery } from 'react-query';
-import Products from '@src/components/home/Product';
+import Products from '@src/components/home/Products';
 import { Product } from '@src/utils/types';
 
 // icons
@@ -46,7 +46,7 @@ const gallery = () => {
   const [filterFn, setFilterFn] = useState({ fn: (items) => items });
   const [filterFc, setFilterFc] = useState({ fc: (items) => items });
   const [currentPage, setCurrentPage] = useState(1);
-  const numberOfPage = Math.ceil(products.length / postsPerPage);
+  const numberOfPage = Math.ceil(products?.length / postsPerPage);
 
   const handlePageChange = (_e, val) => {
     setCurrentPage(val);
@@ -143,13 +143,15 @@ const gallery = () => {
           </Paper>
         </Box>
         <Box style={{ marginTop: '2rem' }}>
-          <Products
-            products={filterFn
-              .fn(filterFc.fc(products))
-              .slice((currentPage - 1) * postsPerPage, (currentPage - 1) * postsPerPage + postsPerPage)}
-            isLoading={isLoading}
-            isSuccess={isSuccess}
-          />
+          {isSuccess && (
+            <Products
+              products={filterFn
+                .fn(filterFc.fc(products))
+                .slice((currentPage - 1) * postsPerPage, (currentPage - 1) * postsPerPage + postsPerPage)}
+              isLoading={isLoading}
+              isSuccess={isSuccess}
+            />
+          )}
         </Box>
 
         <Box
@@ -177,15 +179,44 @@ const gallery = () => {
 
 export default gallery;
 
-// eslint-disable-next-line consistent-return
-export const getServerSideProps: GetServerSideProps = async () => {
-  const queryClient = new QueryClient();
-  await queryClient.prefetchQuery('products', getProducts);
-  await queryClient.prefetchQuery('categories', getCategories);
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+  try {
+    const { cookie } = req.headers;
+    if (!cookie) {
+      return {
+        redirect: {
+          destination: '/login',
+          permanent: false,
+        },
+      };
+    }
 
-  return {
-    props: {
-      dehydratedState: dehydrate(queryClient),
-    },
-  };
+    const getServerProducts = async () => {
+      const { data } = await axios.get('/api/products', { headers: { cookie } });
+      return data;
+    };
+    const getServerCategories = async () => {
+      const { data } = await axios.get('/api/categories', { headers: { cookie } });
+      return data;
+    };
+
+    await axios.get('/api/auth/me', { headers: { cookie } });
+    const queryClient = new QueryClient();
+    await queryClient.prefetchQuery('products', getServerProducts);
+    await queryClient.prefetchQuery('categories', getServerCategories);
+    return {
+      props: {
+        dehydratedState: dehydrate(queryClient),
+      },
+    };
+  } catch (err) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+  }
 };
+
+// TODO : getserverside props verify axios

@@ -8,7 +8,6 @@ import Head from 'next/head';
 import { QueryClientProvider, QueryClient, Hydrate } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import Layout from '@src/components/Layout';
-// import MainContext from '@src/contexts';
 import MainContext from '@src/contexts';
 import createEmotionCache from '@styles/createEmotionCache';
 import theme from '@styles/theme';
@@ -30,18 +29,18 @@ export default function MyApp(props: MyAppProps): any {
     <QueryClientProvider client={queryClient}>
       <Hydrate state={pageProps.dehydratedState}>
         <CacheProvider value={emotionCache}>
-          <Head>
-            <title>My page</title>
-            <meta name="viewport" content="initial-scale=1, width=device-width" />
-          </Head>
-          <ThemeProvider theme={theme}>
-            <MainContext>
+          <MainContext>
+            <Head>
+              <title>My page</title>
+              <meta name="viewport" content="initial-scale=1, width=device-width" />
+            </Head>
+            <ThemeProvider theme={theme}>
               <Layout>
                 <CssBaseline />
                 <Component {...pageProps} />
               </Layout>
-            </MainContext>
-          </ThemeProvider>
+            </ThemeProvider>
+          </MainContext>
         </CacheProvider>
       </Hydrate>
       <ReactQueryDevtools />

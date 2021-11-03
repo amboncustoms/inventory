@@ -6,7 +6,7 @@ import { incartSchema } from '@src/utils/validation_schema';
 import prisma from 'db';
 
 interface Incart {
-  products: [{ productId: string | null; quantity: number | null }];
+  products: [{ productId: string | null; incart: number | null }];
 }
 
 type Num = {
@@ -61,6 +61,7 @@ export default handler()
             id: true,
             name: true,
             code: true,
+            latestQuantity: true,
             category: {
               select: {
                 title: true,
@@ -70,10 +71,12 @@ export default handler()
         });
         await prisma.incartDetail.create({
           data: {
+            productId: product.id,
             productName: product.name,
             productCategory: product.category.title,
             productCode: product.code,
-            productQuantity: p.quantity,
+            productIncart: p.incart,
+            productQuantity: product.latestQuantity,
             incartId: (await incart).id,
           },
         });
@@ -82,7 +85,7 @@ export default handler()
             productCode: product.code,
             productName: product.name,
             productCategory: product.category.title,
-            productQuantity: p.quantity,
+            productQuantity: p.incart,
             notifId: (await notif).id,
           },
         });
@@ -99,10 +102,29 @@ export default handler()
       return res.status(500).json({ message: 'Something went wrong' });
     }
   })
+  .patch(async (req, res) => {
+    const { incarts } = req.body;
+    try {
+      incarts.forEach(async (item) => {
+        const updateIncarts = prisma.incartDetail.update({
+          where: {
+            id: item.id,
+          },
+          data: {
+            productIncart: item.productIncart,
+          },
+        });
+        await prisma.$transaction([updateIncarts]);
+      });
+      return res.json({ message: 'update incart success' });
+    } catch (err) {
+      return res.status(500).json({ message: 'Something went wrong' });
+    }
+  })
   .get(async (req, res) => {
     const { userId } = req.user;
     try {
-      const incarts = await prisma.incart.findFirst({
+      const incart = await prisma.incart.findFirst({
         where: {
           userId,
         },
@@ -110,7 +132,8 @@ export default handler()
           products: true,
         },
       });
-      return res.json(incarts);
+
+      return res.json(incart.products);
     } catch (error) {
       return res.status(500).json({ message: 'Something went wrong' });
     }

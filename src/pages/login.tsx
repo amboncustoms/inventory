@@ -17,7 +17,7 @@ import { Formik } from 'formik';
 import { useRouter } from 'next/router';
 import { useMutation } from 'react-query';
 import * as Yup from 'yup';
-import TextField from '@src/components/FormUI/TextField';
+import TextField from '@src/components/formUI/TextField';
 import { useAuthDispatch, useAuthState } from '@src/contexts/auth';
 
 type LoginValue = {

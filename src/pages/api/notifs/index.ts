@@ -14,6 +14,14 @@ export default handler()
           where: {
             OR: [{ status: 'NOTHING' }, { status: 'PURE' }],
           },
+          include: {
+            user: {
+              select: {
+                id: true,
+                fullname: true,
+              },
+            },
+          },
         });
         const secondNotif = await prisma.notif.findMany({
           where: {
@@ -22,6 +30,14 @@ export default handler()
             },
             type: 'STOCKOUT',
             userId,
+          },
+          include: {
+            user: {
+              select: {
+                id: true,
+                fullname: true,
+              },
+            },
           },
         });
         notif = firstNotif.concat(secondNotif);
@@ -37,6 +53,14 @@ export default handler()
               },
             ],
           },
+          include: {
+            user: {
+              select: {
+                id: true,
+                fullname: true,
+              },
+            },
+          },
         });
         const secondNotif = await prisma.notif.findMany({
           where: {
@@ -45,6 +69,14 @@ export default handler()
             },
             type: 'STOCKOUT',
             userId,
+          },
+          include: {
+            user: {
+              select: {
+                id: true,
+                fullname: true,
+              },
+            },
           },
         });
         notif = firstNotif.concat(secondNotif);
@@ -55,6 +87,14 @@ export default handler()
             type: 'STOCKOUT',
             userId,
           },
+          include: {
+            user: {
+              select: {
+                id: true,
+                fullname: true,
+              },
+            },
+          },
         });
       }
       return res.json(await notif);
@@ -62,14 +102,3 @@ export default handler()
       return res.status(500).json({ message: 'Something went wrong' });
     }
   });
-
-/**
- * TODO : fix notification workflow
- * TODO : atur notifikasi untuk langsung dibuat ketika data tertentu dibuat (product, proposal, adjustment)
- *        TODO : Buat notifikasi ketika usulan penambahan product oleh RT, jadi buat notifikasi dulu baru buat product ✔
- *        TODO : Buat proposal dulu dan otomatis membuat notifikasi ke KSBU
- *        TODO : Buat adjusment dulu baru otomatis membuat notifikasi ke KSBU
- * TODO : migrate
- * TODO : testing api
- *
- */

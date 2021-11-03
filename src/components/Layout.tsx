@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRouter } from 'next/router';
-import CustomDrawer from '@src/components/CustomDrawer';
+import CustomDrawer from '@src/components/drawer/CustomDrawer';
 import Footer from './Footer';
 
 type Props = {

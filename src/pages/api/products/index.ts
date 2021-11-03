@@ -1,11 +1,11 @@
 import handler from '@src/helpers/handler';
-// import auth from '@src/middlewares/auth';
+import auth from '@src/middlewares/auth';
 import validate from '@src/middlewares/validate';
 import { Product, productSchema } from '@src/utils/validation_schema';
 import prisma from 'db';
 
 export default handler()
-  // .use(auth)
+  .use(auth)
   .use(validate(productSchema))
   .post(async (req, res) => {
     const { categoryId, code, description, name }: Product = req.body;

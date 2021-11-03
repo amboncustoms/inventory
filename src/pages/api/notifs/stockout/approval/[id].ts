@@ -9,7 +9,7 @@ export default handler()
     const { role } = req.user;
     const { status } = req.body;
     try {
-      if (role !== 'KSBU') {
+      if (role === 'USER') {
         throw new Error('FORBIDDEN');
       }
       await prisma.notif.update({

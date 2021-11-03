@@ -35,7 +35,7 @@ export default handler()
           httpOnly: true,
           secure: process.env.NODE_ENV !== 'development',
           sameSite: 'strict',
-          maxAge: 3600,
+          maxAge: 33600,
           path: '/',
         })
       );
