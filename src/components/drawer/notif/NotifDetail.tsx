@@ -96,9 +96,15 @@ const NotifDetail = ({ setOpenDetail, notif, incart }) => {
       newSkipped = new Set(newSkipped.values());
       newSkipped.delete(rules.activeStep);
     }
-    setSkipped(newSkipped);
-    setActiveStep(3, incart.user?.id);
-    updateNotifMutation.mutate(notif.id);
+    setActiveStep(3, incart.user?.id)
+      .then(() => {
+        updateNotifMutation.mutate(notif.id);
+        setSkipped(newSkipped);
+      })
+      .catch((err) => {
+        throw new Error(err);
+      })
+      .finally(() => setOpenDetail(false));
   };
 
   return (
@@ -190,23 +196,31 @@ const NotifDetail = ({ setOpenDetail, notif, incart }) => {
       <CardActions
         style={{
           display: 'flex',
-          justifyContent: 'space-between',
+          flexDirection: 'column',
+          justifyContent: 'center',
           alignItems: 'center',
           padding: '0 1rem 1rem',
         }}
       >
-        {user.role === 'RT' && (
-          <Button size="small" color="primary" onClick={() => setOpenModalConfirm(true)}>
-            Barang Siap
-          </Button>
-        )}
         <RenderAlert status={status} user={user} />
+        {user.role === 'RT' && status !== 'READY' && (
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem', width: '100%' }}>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => setOpenModalConfirm(true)}
+              disabled={status === 'READY'}
+            >
+              Barang su Siap ?
+            </Button>
+          </div>
+        )}
       </CardActions>
       <GeneralModal
         handler={setToReady}
         open={openModalConfirm}
         setOpen={setOpenModalConfirm}
-        text="Apakah Anda yakin barang sudah diterima ?."
+        text="Apakah anda yakin barang sudah siap ?."
         type="confirm"
       />
     </Card>

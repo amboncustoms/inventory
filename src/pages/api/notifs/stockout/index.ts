@@ -10,7 +10,7 @@ export default handler()
       const notifs = await prisma.notif.findMany({
         where: {
           userId,
-          status: 'APPROVED',
+          status: 'READY',
           type: 'STOCKOUT',
         },
       });

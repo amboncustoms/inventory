@@ -1,6 +1,9 @@
 import React from 'react';
 import { Queue, Search } from '@mui/icons-material';
 import { Button, Grid, Paper, InputBase, IconButton } from '@mui/material';
+import axios from 'axios';
+import { GetServerSideProps } from 'next';
+import { QueryClient, dehydrate } from 'react-query';
 import StockTable from '@src/components/stock/StockTable';
 // import StockAppbar from '@src/components/stock/StockAppbar';
 
@@ -126,3 +129,38 @@ const Stock = () => {
 };
 
 export default Stock;
+
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+  try {
+    const { cookie } = req.headers;
+    if (!cookie) {
+      return {
+        redirect: {
+          destination: '/login',
+          permanent: false,
+        },
+      };
+    }
+
+    const getReportProducts = async () => {
+      const { data } = await axios.get('/api/reports/products', { headers: { cookie } });
+      return data;
+    };
+
+    await axios.get('/api/auth/me', { headers: { cookie } });
+    const queryClient = new QueryClient();
+    await queryClient.prefetchQuery('report-product', getReportProducts);
+    return {
+      props: {
+        dehydratedState: dehydrate(queryClient),
+      },
+    };
+  } catch (err) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+  }
+};

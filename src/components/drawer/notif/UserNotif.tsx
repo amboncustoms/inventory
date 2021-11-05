@@ -26,7 +26,6 @@ const UserNotif = ({ notif, isSuccess }) => {
 
   const [openDetail, setOpenDetail] = useState(false);
 
-  console.log(notif);
   useEffect(() => {
     if (!userId) {
       setLoading(true);
@@ -70,14 +69,18 @@ const UserNotif = ({ notif, isSuccess }) => {
             <Avatar
               style={{
                 backgroundColor: 'white',
-                border: `1px solid ${status === 'READY' ? '#9500ae' : '#f50057'}`,
+                border: `1px solid ${status === 'READY' || status === 'APPROVED' ? '#9500ae' : '#f50057'}`,
               }}
             >
-              {status === 'READY' ? <CheckCircle color="primary" /> : <NotificationImportant color="secondary" />}
+              {status === 'READY' || status === 'APPROVED' ? (
+                <CheckCircle color="primary" />
+              ) : (
+                <NotificationImportant color="secondary" />
+              )}
             </Avatar>
           }
-          title={`Permohonan ${status === 'READY' ? 'Disetujui' : 'Ditolak'}`}
-          subheader={user.role === 'RT' ? 'Kasubbag Umum' : notifUser?.fullname}
+          title={`Permohonan ${status === 'READY' || status === 'APPROVED' ? 'Disetujui' : 'Ditolak'}`}
+          subheader={notifUser?.fullname}
         />
         <CardActions style={{ justifyContent: 'flex-end', display: 'flex' }}>
           {status === 'REJECTED' && (
@@ -85,7 +88,11 @@ const UserNotif = ({ notif, isSuccess }) => {
               <DeleteIcon color="secondary" />
             </IconButton>
           )}
-          <Button size="small" color={status === 'READY' ? 'primary' : 'secondary'} onClick={() => setOpenDetail(true)}>
+          <Button
+            size="small"
+            color={status === 'READY' || status === 'APPROVED' ? 'primary' : 'secondary'}
+            onClick={() => setOpenDetail(true)}
+          >
             Detail
           </Button>
           {status !== 'REJECTED' && user.id === userId && (

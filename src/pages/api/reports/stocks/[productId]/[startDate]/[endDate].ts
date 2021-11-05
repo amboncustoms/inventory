@@ -7,6 +7,21 @@ export default handler()
   .get(async (req, res) => {
     const { productId, startDate, endDate } = req.query;
     try {
+      const product = await prisma.product.findUnique({
+        where: {
+          id: productId as string,
+        },
+        select: {
+          code: true,
+          name: true,
+          category: {
+            select: {
+              title: true,
+            },
+          },
+          description: true,
+        },
+      });
       const stocksInBeforeDate = await prisma.stockIn.findMany({
         where: {
           productId: productId as string,
@@ -39,14 +54,10 @@ export default handler()
         },
         select: {
           id: true,
+          price: true,
           quantity: true,
           createdAt: true,
-          product: {
-            select: {
-              name: true,
-              code: true,
-            },
-          },
+          description: true,
         },
       });
       const stocksOutRangeDate = await prisma.stockOut.findMany({
@@ -59,14 +70,10 @@ export default handler()
         },
         select: {
           id: true,
+          price: true,
           quantity: true,
           createdAt: true,
-          product: {
-            select: {
-              name: true,
-              code: true,
-            },
-          },
+          description: true,
         },
       });
 
@@ -78,14 +85,33 @@ export default handler()
       const stockInMain = stocksInBeforeDate.reduce((acc, { quantity }: { quantity: number }) => acc + quantity, 0);
       const stockOutMain = stocksOutBeforeDate.reduce((acc, { quantity }: { quantity: number }) => acc + quantity, 0);
 
+      const stockIn = stocksInRangeDate.map((s) => {
+        return {
+          id: s.id,
+          quantity: s.quantity,
+          description: s.description,
+          price: s.price,
+          date: s.createdAt,
+          ket: 'Pemasukan',
+        };
+      });
+      const stockOut = stocksOutRangeDate.map((s) => {
+        return {
+          id: s.id,
+          quantity: s.quantity,
+          description: s.description,
+          price: s.price,
+          date: s.createdAt,
+          ket: 'Pengeluaran',
+        };
+      });
       return res.json({
-        stocks: {
-          stockIn: stocksInRangeDate.map((s) => {
-            return { id: s.id, name: s.product.name, code: s.product.code, quantity: s.quantity, date: s.createdAt };
-          }),
-          stockOut: stocksOutRangeDate.map((s) => {
-            return { id: s.id, name: s.product.name, code: s.product.code, quantity: s.quantity, date: s.createdAt };
-          }),
+        data: {
+          name: product.name,
+          code: product.code,
+          category: product.category.title,
+          description: product.description,
+          mutations: stockIn.concat(stockOut).sort((a, b) => a.date.valueOf() - b.date.valueOf()),
         },
         mainStock: stockInMain - stockOutMain,
         latestStock: stockInQuantity - stockOutQuantity,

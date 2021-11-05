@@ -14,11 +14,10 @@ const getIncart = async () => {
 
 const Confirm = ({ rules }) => {
   const { skip } = useContext(CartContext);
-  const { data: incart, isSuccess } = useQuery('myincart', getIncart);
+  const { data: incart } = useQuery('myincart', getIncart);
   const [skipped, setSkipped] = skip;
   const [openModalConfirm, setOpenModalConfirm] = useState(false);
   const queryClient = useQueryClient();
-
   const setAllowMutation = useMutation(
     () => {
       return axios.patch('/api/rules', { allowAddToCart: 'ALLOW' });
@@ -42,7 +41,7 @@ const Confirm = ({ rules }) => {
 
   const sendOrderMutation = useMutation(
     (data: any) => {
-      return axios.patch('/api/orders', data);
+      return axios.post('/api/orders', data);
     },
     {
       onSuccess: () => {
@@ -53,7 +52,7 @@ const Confirm = ({ rules }) => {
 
   const deleteNotifMutation = useMutation(
     () => {
-      return axios.delete('/api/notifs');
+      return axios.delete('/api/notifs/stockout');
     },
     {
       onSuccess: () => {
@@ -82,7 +81,9 @@ const Confirm = ({ rules }) => {
   };
 
   const runMutation = () => {
-    sendOrderMutation.mutate({ products: isSuccess && incart });
+    sendOrderMutation.mutate({
+      products: incart,
+    });
     setAllowMutation.mutate();
     setActiveMutation.mutate();
     deleteIncartMutation.mutate();
@@ -100,9 +101,6 @@ const Confirm = ({ rules }) => {
       setSkipped(newSkipped);
     } catch (err) {
       throw new Error(err);
-    } finally {
-      queryClient.invalidateQueries('notifs');
-      queryClient.invalidateQueries('incart');
     }
   };
 
@@ -125,7 +123,8 @@ const Confirm = ({ rules }) => {
             Permohonan telah disetujui Kasubbagian Umum,
           </Typography>
           <Typography variant="h6" style={{ textAlign: 'center' }}>
-            Jika barang telah diterima, dimohon untuk konfirmasi dengan klik tombol &quot;Diterima&quot;, Danke.
+            Jika barang telah diterima, dimohon untuk konfirmasi dengan klik tombol &quot;Diterima&quot;, kemudian
+            silakan untuk mengambil barangnya di RT, Danke.
           </Typography>
           <Button
             startIcon={<Receipt />}

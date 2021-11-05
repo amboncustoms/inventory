@@ -133,7 +133,14 @@ export default handler()
         },
       });
 
-      return res.json(incart.products);
+      const fix = incart.products.map((i) => {
+        return {
+          productId: i.productId,
+          incart: i.productIncart,
+        };
+      });
+
+      return res.json(fix);
     } catch (error) {
       return res.status(500).json({ message: 'Something went wrong' });
     }

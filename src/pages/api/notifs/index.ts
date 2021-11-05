@@ -25,9 +25,14 @@ export default handler()
         });
         const secondNotif = await prisma.notif.findMany({
           where: {
-            NOT: {
-              status: 'NOTHING',
-            },
+            NOT: [
+              {
+                status: 'NOTHING',
+              },
+              {
+                status: 'APPROVED',
+              },
+            ],
             type: 'STOCKOUT',
             userId,
           },
@@ -51,6 +56,9 @@ export default handler()
               {
                 status: 'PURE',
               },
+              {
+                status: 'READY',
+              },
             ],
           },
           include: {
@@ -64,9 +72,14 @@ export default handler()
         });
         const secondNotif = await prisma.notif.findMany({
           where: {
-            NOT: {
-              status: 'NOTHING',
-            },
+            NOT: [
+              {
+                status: 'NOTHING',
+              },
+              {
+                status: 'APPROVED',
+              },
+            ],
             type: 'STOCKOUT',
             userId,
           },

@@ -78,7 +78,7 @@ model Stock {
 
 model StockIn {
   id           String   @id @default(cuid())
-  description  String?  @default("Pemasukan stok oleh admin")
+  description  String?
   price        Int
   quantity     Int
   note         String?  @db.VarChar(255)
@@ -95,7 +95,7 @@ model StockIn {
 
 model StockOut {
   id           String   @id @default(cuid())
-  description  String?  @default("Pengeluaran stok atas permintaan unit")
+  description  String?
   price        Int
   quantity     Int
   note         String?  @db.VarChar(255)
