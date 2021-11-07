@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Box } from '@mui/material';
-import * as chartjs from 'chart.js';
+// import * as chartjs from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import Loading from '../Loading';
 
@@ -9,7 +9,7 @@ const colors = ['#006666', '#4d4dff', '#ff3333', '#ffa500', '#008000', '#883dbd'
 const borderColors = ['#00666660', '#4d4dff60', '#ff333360', '#ffa50060', '#00800060', '#883dbd60'];
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
 
-const options: chartjs.ChartOptions = {
+const options = {
   scales: {
     y: {
       beginAtZero: true,
@@ -17,8 +17,8 @@ const options: chartjs.ChartOptions = {
   },
   plugins: {
     legend: {
-      position: 'bottom',
-      align: 'center',
+      position: 'bottom' as const,
+      align: 'center' as const,
       labels: {
         padding: 30,
         usePointStyle: true,

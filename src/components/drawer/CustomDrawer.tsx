@@ -24,11 +24,10 @@ import {
   Paper,
 } from '@mui/material';
 import axios from 'axios';
-import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { dehydrate, QueryClient, useQuery } from 'react-query';
+import { useQuery } from 'react-query';
 import { CartContext } from '@src/contexts/cart';
 import Notification from './notif';
 
@@ -282,30 +281,3 @@ const CustomDrawer: FC<Props> = (props) => {
   );
 };
 export default CustomDrawer;
-
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  try {
-    const { cookie } = req.headers;
-    if (!cookie) {
-      return {
-        redirect: {
-          destination: '/login',
-          permanent: false,
-        },
-      };
-    }
-    const getServerNotifs = async () => {
-      const { data } = await axios.get('/api/notifs', { headers: { cookie } });
-      return data;
-    };
-    const queryClient = new QueryClient();
-    await queryClient.prefetchQuery('notifs', getServerNotifs);
-    return {
-      props: {
-        dehydratedState: dehydrate(queryClient),
-      },
-    };
-  } catch (err) {
-    res.writeHead(307, { Location: '/login' }).end();
-  }
-};

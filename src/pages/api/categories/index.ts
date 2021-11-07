@@ -5,6 +5,23 @@ import { categorySchema } from '@src/utils/validation_schema';
 import prisma from 'db';
 import { Prisma } from '.prisma/client';
 
+export const getCat = async (_, res) => {
+  try {
+    const categories = await prisma.category.findMany({
+      select: {
+        id: true,
+        title: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+    return res.json(categories);
+  } catch (error) {
+    return res.status(500).json({ message: 'Something went wrong' });
+  }
+};
+
 export default handler()
   .use(auth)
   .use(validate(categorySchema))
@@ -29,19 +46,4 @@ export default handler()
       return res.status(500).json({ message: 'Something went wrong' });
     }
   })
-  .get(async (_, res) => {
-    try {
-      const categories = await prisma.category.findMany({
-        select: {
-          id: true,
-          title: true,
-        },
-        orderBy: {
-          createdAt: 'desc',
-        },
-      });
-      return res.json(categories);
-    } catch (error) {
-      return res.status(500).json({ message: 'Something went wrong' });
-    }
-  });
+  .get((req, res) => getCat(req, res));

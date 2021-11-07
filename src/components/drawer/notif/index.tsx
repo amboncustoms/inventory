@@ -90,31 +90,3 @@ const Notification = ({ setOpenPopper }) => {
 };
 
 export default Notification;
-
-// export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-//   try {
-//     const { cookie } = req.headers;
-//     if (!cookie) {
-//       return {
-//         redirect: {
-//           destination: '/login',
-//           permanent: false,
-//         },
-//       };
-//     }
-//     const getServerNotifs = async () => {
-//       const { data } = await axios.get('/api/notifs', { headers: cookie });
-//       return data;
-//     };
-
-//     const queryClient = new QueryClient();
-//     await queryClient.prefetchQuery('notifs', getServerNotifs);
-//     return {
-//       props: {
-//         dehydratedState: dehydrate(queryClient),
-//       },
-//     };
-//   } catch (err) {
-//     res.writeHead(307, { Location: '/login' }).end();
-//   }
-// };

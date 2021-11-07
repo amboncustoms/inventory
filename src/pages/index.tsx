@@ -12,10 +12,12 @@ import {
   IconButton,
 } from '@mui/material';
 import axios from 'axios';
+import { verify } from 'jsonwebtoken';
 import { GetServerSideProps } from 'next';
-import { dehydrate, QueryClient, useQuery } from 'react-query';
+import { useQuery } from 'react-query';
 import Products from '@src/components/home/Products';
 import { Product } from '@src/utils/types';
+import { PrismaClient } from '.prisma/client';
 
 // icons
 
@@ -46,7 +48,7 @@ const gallery = () => {
   const [filterFn, setFilterFn] = useState({ fn: (items) => items });
   const [filterFc, setFilterFc] = useState({ fc: (items) => items });
   const [currentPage, setCurrentPage] = useState(1);
-  const numberOfPage = Math.ceil(products?.length / postsPerPage);
+  const numberOfPage = Math.ceil(isSuccess && products?.length / postsPerPage);
 
   const handlePageChange = (_e, val) => {
     setCurrentPage(val);
@@ -180,6 +182,7 @@ const gallery = () => {
 export default gallery;
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+  const prisma = new PrismaClient();
   try {
     const { cookie } = req.headers;
     if (!cookie) {
@@ -191,23 +194,12 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
       };
     }
 
-    const getServerProducts = async () => {
-      const { data } = await axios.get('/api/products', { headers: { cookie } });
-      return data;
-    };
-    const getServerCategories = async () => {
-      const { data } = await axios.get('/api/categories', { headers: { cookie } });
-      return data;
-    };
+    const { authorization } = req.cookies;
+    const { userId }: any = verify(authorization, process.env.JWT_SECRET);
+    await prisma.user.findUnique({ where: { id: userId } });
 
-    await axios.get('/api/auth/me', { headers: { cookie } });
-    const queryClient = new QueryClient();
-    await queryClient.prefetchQuery('products', getServerProducts);
-    await queryClient.prefetchQuery('categories', getServerCategories);
     return {
-      props: {
-        dehydratedState: dehydrate(queryClient),
-      },
+      props: {},
     };
   } catch (err) {
     return {
@@ -218,5 +210,3 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
     };
   }
 };
-
-// TODO : getserverside props verify axios

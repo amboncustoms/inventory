@@ -4,6 +4,51 @@ import validate from '@src/middlewares/validate';
 import { Product, productSchema } from '@src/utils/validation_schema';
 import prisma from 'db';
 
+export const getApiProducts = async (_, res) => {
+  try {
+    const products = await prisma.product.findMany({
+      select: {
+        id: true,
+        name: true,
+        code: true,
+        latestQuantity: true,
+        description: true,
+        category: {
+          select: {
+            title: true,
+          },
+        },
+        stocks: {
+          select: {
+            createdAt: true,
+            price: true,
+            description: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+    const customProduct = products.map((product) => {
+      const latestProduct = product.stocks.reduce((a, b) => (a.createdAt > b.createdAt ? a : b));
+      return {
+        id: product.id,
+        name: product.name,
+        code: product.code,
+        category: product.category.title,
+        productDesc: product.description,
+        stockDesc: latestProduct.description,
+        latestQuantity: product.latestQuantity,
+        price: latestProduct.price,
+      };
+    });
+    return res.json(customProduct);
+  } catch (error) {
+    return res.status(500).json({ message: 'Something went wrong' });
+  }
+};
+
 export default handler()
   .use(auth)
   .use(validate(productSchema))
@@ -31,47 +76,4 @@ export default handler()
       return res.status(500).json({ message: 'Something went wrong' });
     }
   })
-  .get(async (_, res) => {
-    try {
-      const products = await prisma.product.findMany({
-        select: {
-          id: true,
-          name: true,
-          code: true,
-          latestQuantity: true,
-          description: true,
-          category: {
-            select: {
-              title: true,
-            },
-          },
-          stocks: {
-            select: {
-              createdAt: true,
-              price: true,
-              description: true,
-            },
-          },
-        },
-        orderBy: {
-          createdAt: 'desc',
-        },
-      });
-      const customProduct = products.map((product) => {
-        const latestProduct = product.stocks.reduce((a, b) => (a.createdAt > b.createdAt ? a : b));
-        return {
-          id: product.id,
-          name: product.name,
-          code: product.code,
-          category: product.category.title,
-          productDesc: product.description,
-          stockDesc: latestProduct.description,
-          latestQuantity: product.latestQuantity,
-          price: latestProduct.price,
-        };
-      });
-      return res.json(customProduct);
-    } catch (error) {
-      return res.status(500).json({ message: 'Something went wrong' });
-    }
-  });
+  .get((req, res) => getApiProducts(req, res));

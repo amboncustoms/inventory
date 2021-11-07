@@ -1,10 +1,11 @@
 import React from 'react';
 import { Queue, Search } from '@mui/icons-material';
 import { Button, Grid, Paper, InputBase, IconButton } from '@mui/material';
-import axios from 'axios';
+import { PrismaClient } from '@prisma/client';
+import { verify } from 'jsonwebtoken';
 import { GetServerSideProps } from 'next';
-import { QueryClient, dehydrate } from 'react-query';
 import StockTable from '@src/components/stock/StockTable';
+// import { getApiReportProduct } from '../api/reports/products';
 // import StockAppbar from '@src/components/stock/StockAppbar';
 
 const Stock = () => {
@@ -131,6 +132,7 @@ const Stock = () => {
 export default Stock;
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+  const prisma = new PrismaClient();
   try {
     const { cookie } = req.headers;
     if (!cookie) {
@@ -141,19 +143,11 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
         },
       };
     }
-
-    const getReportProducts = async () => {
-      const { data } = await axios.get('/api/reports/products', { headers: { cookie } });
-      return data;
-    };
-
-    await axios.get('/api/auth/me', { headers: { cookie } });
-    const queryClient = new QueryClient();
-    await queryClient.prefetchQuery('report-product', getReportProducts);
+    const { authorization } = req.cookies;
+    const { userId }: any = verify(authorization, process.env.JWT_SECRET);
+    await prisma.user.findUnique({ where: { id: userId } });
     return {
-      props: {
-        dehydratedState: dehydrate(queryClient),
-      },
+      props: {},
     };
   } catch (err) {
     return {

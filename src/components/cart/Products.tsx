@@ -103,7 +103,7 @@ const Products = ({ rules, isSuccess }) => {
 
   const isAuthenticated = async () => {
     try {
-      await axios.get('api/auth/me');
+      await axios.get('/api/auth/me');
       return true;
     } catch (err) {
       return false;

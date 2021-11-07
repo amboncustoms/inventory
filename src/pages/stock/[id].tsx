@@ -19,8 +19,11 @@ import {
   Grid,
   IconButton,
 } from '@mui/material';
+import { PrismaClient } from '@prisma/client';
 import axios from 'axios';
 import { add, format } from 'date-fns';
+import { verify } from 'jsonwebtoken';
+import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import Loading from '@src/components/Loading';
 
@@ -296,3 +299,31 @@ const Detail = () => {
 };
 
 export default Detail;
+
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+  const prisma = new PrismaClient();
+  try {
+    const { cookie } = req.headers;
+    if (!cookie) {
+      return {
+        redirect: {
+          destination: '/login',
+          permanent: false,
+        },
+      };
+    }
+    const { authorization } = req.cookies;
+    const { userId }: any = verify(authorization, process.env.JWT_SECRET);
+    await prisma.user.findUnique({ where: { id: userId } });
+    return {
+      props: {},
+    };
+  } catch (err) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+  }
+};

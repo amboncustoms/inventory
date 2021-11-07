@@ -1,9 +1,11 @@
 import React, { useContext } from 'react';
 import { Stepper, Step, StepLabel, Divider } from '@mui/material';
+import { PrismaClient } from '@prisma/client';
 import axios from 'axios';
+import { verify } from 'jsonwebtoken';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
-import { useQuery, QueryClient, dehydrate } from 'react-query';
+import { useQuery } from 'react-query';
 import Confirm from '@src/components/cart/Confirm';
 import Products from '@src/components/cart/Products';
 import Waiting from '@src/components/cart/Waiting';
@@ -35,7 +37,7 @@ const Cart = () => {
       case 2:
         return <Waiting />;
       case 3:
-        return <Confirm rules={rules} isSuccess={isSuccess} />;
+        return <Confirm rules={rules} />;
       default:
         return 'Unknown step';
     }
@@ -73,8 +75,8 @@ const Cart = () => {
 };
 
 export default Cart;
-
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+  const prisma = new PrismaClient();
   try {
     const { cookie } = req.headers;
     if (!cookie) {
@@ -85,17 +87,11 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
         },
       };
     }
-    const getServerRules = async () => {
-      const { data } = await axios.get('/api/rules', { headers: { cookie } });
-      return data;
-    };
-    await axios.get('/api/auth/me', { headers: { cookie } });
-    const queryClient = new QueryClient();
-    await queryClient.prefetchQuery('rules', getServerRules);
+    const { authorization } = req.cookies;
+    const { userId }: any = verify(authorization, process.env.JWT_SECRET);
+    await prisma.user.findUnique({ where: { id: userId } });
     return {
-      props: {
-        dehydratedState: dehydrate(queryClient),
-      },
+      props: {},
     };
   } catch (err) {
     return {
