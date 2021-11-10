@@ -47,7 +47,7 @@ export default function Login() {
 
   useEffect(() => {
     if (authenticated) router.push('/');
-  }, [authenticated, router]);
+  }, [authenticated]);
 
   const handleClose = (_event?: React.SyntheticEvent, reason?: string) => {
     if (reason === 'clickaway') {

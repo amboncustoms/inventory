@@ -52,7 +52,7 @@ const Products = (props: PropTypes): JSX.Element => {
       {isLoading ? (
         <Loading />
       ) : (
-        <Grid container sx={{ justifyContent: 'flex-start' }} spacing={4}>
+        <Grid container sx={{ justifyContent: 'flex-start', padding: { xs: '0 2.5rem' } }} spacing={4}>
           {isSuccess &&
             products?.map((product) => (
               <Grid item key={product.id} xs={12} sm={6} md={4} lg={3}>

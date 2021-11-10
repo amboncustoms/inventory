@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "cross-env NODE_OPTIONS='--inspect' next dev",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -43,6 +43,7 @@
     "react-chartjs-2": "^3.0.5",
     "react-dom": "17.0.2",
     "react-indexed-db": "^1.0.12",
+    "react-number-format": "^4.7.3",
     "react-query": "^3.24.4",
     "react-redux": "^7.2.5",
     "react-spinners": "^0.11.0",

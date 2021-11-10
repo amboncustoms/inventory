@@ -159,8 +159,8 @@ function Row(props) {
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
           <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: '1rem 1rem 2rem 1rem' }}>
-              <Table size="small" aria-label="purchases">
+            <Box sx={{ margin: '2rem' }}>
+              <Table aria-label="purchases" style={{ border: '1px solid #E5E8EC' }}>
                 <TableHead>
                   <TableRow>
                     <TableCell align="center">Kode Barang</TableCell>
@@ -199,6 +199,7 @@ export default function CollapsibleTable({ userId, setOpen, notifId }) {
 
   const [openModalAuth, setOpenModalAuth] = useState(false);
   const [openModalConfirm, setOpenModalConfirm] = useState(false);
+  const [openModalReject, setOpenModalReject] = useState(false);
 
   const updateIncartsMutation = useMutation(
     (data: any) => {
@@ -274,13 +275,12 @@ export default function CollapsibleTable({ userId, setOpen, notifId }) {
           </Avatar>
         }
         title="Detail Permohonan Barang"
-        subheader="Radar"
       />
       <Paper
         style={{
           borderRadius: 10,
           border: '1px solid #E5E8EC',
-          margin: '2rem 0',
+          margin: '1rem 0 2rem 0',
         }}
         elevation={0}
       >
@@ -322,7 +322,7 @@ export default function CollapsibleTable({ userId, setOpen, notifId }) {
         </TableContainer>
       </Paper>
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <Button size="small" color="secondary" variant="contained" onClick={() => setOpen(false)}>
+        <Button size="small" color="secondary" variant="contained" onClick={() => setOpenModalReject(true)}>
           Reject
         </Button>
         <Button size="small" color="primary" variant="contained" style={{ marginLeft: '1rem' }} onClick={modalHandler}>
@@ -341,6 +341,15 @@ export default function CollapsibleTable({ userId, setOpen, notifId }) {
         setOpen={setOpenModalConfirm}
         text="Apakah anda yakin?."
         type="confirm"
+      />
+      <GeneralModal
+        notifId={notifId}
+        userId={userId}
+        open={openModalReject}
+        setOpen={setOpenModalReject}
+        setOpenApprovalPopper={setOpen}
+        setIncartsUpdate={setIncartsUpdate}
+        type="reject"
       />
     </Paper>
   );

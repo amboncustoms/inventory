@@ -2,7 +2,7 @@ import React from 'react';
 import { Category, CallMissedOutgoing, ShowChart } from '@mui/icons-material';
 import { Grid, Paper, Avatar, Typography, Box } from '@mui/material';
 
-const InfoCard = ({ categories = [], products = [], totalStockOut = 0 }) => {
+const InfoCard = ({ categoryTotal = 0, productTotal = 0, stockOutTotal = 0 }) => {
   return (
     <Grid item container spacing={4} style={{ flexGrow: 1 }}>
       <Grid item md={4} xs={12}>
@@ -26,7 +26,7 @@ const InfoCard = ({ categories = [], products = [], totalStockOut = 0 }) => {
               }}
             >
               <Typography variant="h5" style={{ fontWeight: 'bold', color: '#ED8936' }}>
-                {categories.length}
+                {categoryTotal}
               </Typography>
               <Typography variant="body1">Kategori</Typography>
             </div>
@@ -55,9 +55,9 @@ const InfoCard = ({ categories = [], products = [], totalStockOut = 0 }) => {
               }}
             >
               <Typography variant="h5" style={{ fontWeight: 'bold', color: '#38B2AC' }}>
-                {products.length}
+                {productTotal}
               </Typography>
-              <Typography variant="body1">Stock</Typography>
+              <Typography variant="body1">Barang</Typography>
             </div>
           </Box>
         </Paper>
@@ -84,7 +84,7 @@ const InfoCard = ({ categories = [], products = [], totalStockOut = 0 }) => {
               }}
             >
               <Typography variant="h5" style={{ fontWeight: 'bold', color: '#9F7AEA' }}>
-                {totalStockOut}
+                {stockOutTotal}
               </Typography>
               <Typography variant="body1">Stock Out</Typography>
             </div>

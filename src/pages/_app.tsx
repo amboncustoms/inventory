@@ -6,7 +6,6 @@ import axios from 'axios';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 import { QueryClientProvider, QueryClient } from 'react-query';
-import { ReactQueryDevtools } from 'react-query/devtools';
 import Layout from '@src/components/Layout';
 import MainContext from '@src/contexts';
 import createEmotionCache from '@styles/createEmotionCache';
@@ -24,22 +23,21 @@ interface MyAppProps extends AppProps {
 export default function MyApp(props: MyAppProps): any {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
   return (
-    <QueryClientProvider client={queryClient}>
-      <CacheProvider value={emotionCache}>
-        <Head>
-          <title>My page</title>
-          <meta name="viewport" content="initial-scale=1, width=device-width" />
-        </Head>
-        <ThemeProvider theme={theme}>
-          <MainContext>
+    <MainContext>
+      <QueryClientProvider client={queryClient}>
+        <CacheProvider value={emotionCache}>
+          <Head>
+            <title>My page</title>
+            <meta name="viewport" content="initial-scale=1, width=device-width" />
+          </Head>
+          <ThemeProvider theme={theme}>
             <Layout>
               <CssBaseline />
               <Component {...pageProps} />
             </Layout>
-          </MainContext>
-        </ThemeProvider>
-      </CacheProvider>
-      <ReactQueryDevtools />
-    </QueryClientProvider>
+          </ThemeProvider>
+        </CacheProvider>
+      </QueryClientProvider>
+    </MainContext>
   );
 }

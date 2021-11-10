@@ -44,7 +44,7 @@ const options = {
   },
 };
 
-const RadarChart = ({ orders = [] }): JSX.Element => {
+const RadarChart = ({ stocks }): JSX.Element => {
   const [janData, setJanData] = useState(Array(...Array(6)).map(Number.prototype.valueOf, 0));
   const [febData, setFebData] = useState(Array(...Array(6)).map(Number.prototype.valueOf, 0));
   const [marData, setMarData] = useState(Array(...Array(6)).map(Number.prototype.valueOf, 0));
@@ -174,62 +174,120 @@ const RadarChart = ({ orders = [] }): JSX.Element => {
   const nov = Array(...Array(6)).map(Number.prototype.valueOf, 0);
   const des = Array(...Array(6)).map(Number.prototype.valueOf, 0);
 
-  const setStateData = useCallback(
-    (indexOfCategory: number, month: string, quantity: number) => {
-      switch (month) {
-        case 'Jan':
-          jan[indexOfCategory] = quantity;
+  const setStateData = useCallback((indexOfCategory: number, month: string, genuineQuantity: number) => {
+    switch (month) {
+      case 'Jan':
+        if (jan[indexOfCategory] !== 0) {
+          jan[indexOfCategory] += genuineQuantity;
           setJanData(jan);
-          break;
-        case 'Feb':
-          feb[indexOfCategory] = quantity;
+        } else {
+          jan[indexOfCategory] = genuineQuantity;
+          setJanData(jan);
+        }
+        break;
+      case 'Feb':
+        if (feb[indexOfCategory] !== 0) {
+          feb[indexOfCategory] += genuineQuantity;
           setFebData(feb);
-          break;
-        case 'Mar':
-          mar[indexOfCategory] = quantity;
+        } else {
+          feb[indexOfCategory] = genuineQuantity;
+          setFebData(feb);
+        }
+        break;
+      case 'Mar':
+        if (mar[indexOfCategory] !== 0) {
+          mar[indexOfCategory] += genuineQuantity;
           setMarData(mar);
-          break;
-        case 'Apr':
-          apr[indexOfCategory] = quantity;
+        } else {
+          mar[indexOfCategory] = genuineQuantity;
+          setMarData(mar);
+        }
+        break;
+      case 'Apr':
+        if (apr[indexOfCategory] !== 0) {
+          apr[indexOfCategory] += genuineQuantity;
           setAprData(apr);
-          break;
-        case 'Mei':
-          mei[indexOfCategory] = quantity;
+        } else {
+          apr[indexOfCategory] = genuineQuantity;
+          setAprData(apr);
+        }
+        break;
+      case 'Mei':
+        if (mei[indexOfCategory] !== 0) {
+          mei[indexOfCategory] += genuineQuantity;
           setMeiData(mei);
-          break;
-        case 'Jun':
-          jun[indexOfCategory] = quantity;
+        } else {
+          mei[indexOfCategory] = genuineQuantity;
+          setMeiData(mei);
+        }
+        break;
+      case 'Jun':
+        if (jun[indexOfCategory] !== 0) {
+          jun[indexOfCategory] += genuineQuantity;
           setJunData(jun);
-          break;
-        case 'Jul':
-          jul[indexOfCategory] = quantity;
-
+        } else {
+          jun[indexOfCategory] = genuineQuantity;
+          setJunData(jun);
+        }
+        break;
+      case 'Jul':
+        if (jul[indexOfCategory] !== 0) {
+          jul[indexOfCategory] += genuineQuantity;
           setJulData(jul);
-          break;
-        case 'Agu':
-          agu[indexOfCategory] = quantity;
+        } else {
+          jul[indexOfCategory] = genuineQuantity;
+          setJulData(jul);
+        }
+        break;
+      case 'Agu':
+        if (agu[indexOfCategory] !== 0) {
+          agu[indexOfCategory] += genuineQuantity;
           setAguData(agu);
-          break;
-        case 'Sep':
-          sep[indexOfCategory] = quantity;
+        } else {
+          agu[indexOfCategory] = genuineQuantity;
+          setAguData(agu);
+        }
+        break;
+      case 'Sep':
+        if (sep[indexOfCategory] !== 0) {
+          sep[indexOfCategory] += genuineQuantity;
           setSepData(sep);
-          break;
-        case 'Okt':
-          okt[indexOfCategory] = quantity;
+        } else {
+          sep[indexOfCategory] = genuineQuantity;
+          setSepData(sep);
+        }
+        break;
+      case 'Okt':
+        if (okt[indexOfCategory] !== 0) {
+          okt[indexOfCategory] += genuineQuantity;
           setOktData(okt);
-          break;
-        case 'Nov':
-          nov[indexOfCategory] = quantity;
+        } else {
+          okt[indexOfCategory] = genuineQuantity;
+          setOktData(okt);
+        }
+        break;
+      case 'Nov':
+        if (nov[indexOfCategory] !== 0) {
+          nov[indexOfCategory] += genuineQuantity;
           setNovData(nov);
-          break;
-        default:
-          des[indexOfCategory] = quantity;
+        } else {
+          nov[indexOfCategory] = genuineQuantity;
+          setNovData(nov);
+        }
+        break;
+      case 'Des':
+        if (des[indexOfCategory] !== 0) {
+          des[indexOfCategory] += genuineQuantity;
           setDesData(des);
-          break;
-      }
-    },
-    [agu, apr, des, feb, jan, jul, jun, mar, mei, nov, okt, sep]
-  );
+        } else {
+          des[indexOfCategory] = genuineQuantity;
+          setDesData(des);
+        }
+        break;
+      default:
+        break;
+    }
+  }, []);
   const getCategoryName = (category: any) => {
     let categoryName: string;
     switch (category) {
@@ -256,26 +314,25 @@ const RadarChart = ({ orders = [] }): JSX.Element => {
   };
 
   const setChart = useCallback(() => {
-    orders.forEach((order) => {
-      order.carts.forEach((cart: { quantity: any; createdAt: any; productCategory: any }) => {
-        const { quantity, createdAt, productCategory } = cart;
-        const date = new Date(createdAt);
-        const getMonth = months[date.getMonth()];
-        const getCategory = getCategoryName(productCategory);
-        const indexOfCategory = categories.findIndex((cat) => cat === getCategory);
-        setStateData(indexOfCategory, getMonth, quantity);
-      });
+    stocks.forEach((stock) => {
+      const { genuineQuantity, createdAt, category } = stock;
+      const date = new Date(createdAt);
+      const getMonth = months[date.getMonth()];
+      const getCategory = getCategoryName(category);
+
+      const indexOfCategory = categories.findIndex((cat) => cat === getCategory);
+      setStateData(indexOfCategory, getMonth, genuineQuantity);
     });
-  }, [orders, setStateData]);
+  }, [stocks, setStateData]);
 
   useEffect(() => {
-    if (!orders) {
+    if (!stocks) {
       setLoading(true);
     } else {
       setChart();
       setLoading(false);
     }
-  }, [orders, setChart]);
+  }, [stocks, setChart]);
 
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>

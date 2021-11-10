@@ -203,7 +203,7 @@ const NotifDetail = ({ setOpenDetail, notif, incart }) => {
         }}
       >
         <RenderAlert status={status} user={user} />
-        {user.role === 'RT' && status !== 'READY' && (
+        {user.role === 'RT' && status !== 'READY' && status !== 'REJECTED' && (
           <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem', width: '100%' }}>
             <Button
               variant="outlined"

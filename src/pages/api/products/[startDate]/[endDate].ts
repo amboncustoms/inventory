@@ -38,16 +38,17 @@ export default handler()
         },
       });
       const customProduct = products.map((product) => {
-        const latestProduct = product.stocks.reduce((a, b) => (a.createdAt > b.createdAt ? a : b));
+        const latestProduct =
+          product.stocks.length === 0 ? null : product.stocks.reduce((a, b) => (a.createdAt > b.createdAt ? a : b));
         return {
           id: product.id,
           name: product.name,
           code: product.code,
           category: product.category.title,
           productDesc: product.description,
-          stockDesc: latestProduct.description,
+          stockDesc: latestProduct ? latestProduct.description : product.description || '',
           latestQuantity: product.latestQuantity,
-          price: latestProduct.price,
+          price: latestProduct ? latestProduct.price : 0,
         };
       });
       return res.json(customProduct);

@@ -33,7 +33,7 @@ const options = {
   },
 };
 
-const LineChart = ({ orders = [] }) => {
+const LineChart = ({ stocks = [] }) => {
   const [ATKData, setATKData] = useState(Array(...Array(12)).map(Number.prototype.valueOf, 0));
   const [kendaraanData, setKendaraanData] = useState(Array(...Array(12)).map(Number.prototype.valueOf, 0));
   const [kebersihanData, setKebersihanData] = useState(Array(...Array(12)).map(Number.prototype.valueOf, 0));
@@ -102,59 +102,55 @@ const LineChart = ({ orders = [] }) => {
   const komputer = Array(...Array(12)).map(Number.prototype.valueOf, 0);
   const obat = Array(...Array(12)).map(Number.prototype.valueOf, 0);
   const lain = Array(...Array(12)).map(Number.prototype.valueOf, 0);
-  const setStateData = useCallback(
-    (indexOfMonth, category, quantity) => {
-      switch (category) {
-        case 'alat tulis kantor':
-          atk[indexOfMonth] = quantity;
-          setATKData(atk);
-          break;
-        case 'alat kebersihan':
-          kebersihan[indexOfMonth] = quantity;
-          setKebersihanData(kebersihan);
-          break;
-        case 'alat kendaraan':
-          kendaraan[indexOfMonth] = quantity;
-          setKendaraanData(kendaraan);
-          break;
-        case 'alat komputer':
-          komputer[indexOfMonth] = quantity;
-          setKomputerData(komputer);
-          break;
-        case 'obat obatan':
-          obat[indexOfMonth] = quantity;
-          setObatData(obat);
-          break;
-        default:
-          lain[indexOfMonth] = quantity;
-          setLainData(lain);
-          break;
-      }
-    },
-    [atk, kebersihan, kendaraan, komputer, lain, obat]
-  );
+  const setStateData = useCallback((indexOfMonth, category, quantity, otherQuantity) => {
+    switch (category) {
+      case 'alat tulis kantor':
+        atk[indexOfMonth] = quantity;
+        setATKData(atk);
+        break;
+      case 'alat kebersihan':
+        kebersihan[indexOfMonth] = quantity;
+        setKebersihanData(kebersihan);
+        break;
+      case 'alat kendaraan':
+        kendaraan[indexOfMonth] = quantity;
+        setKendaraanData(kendaraan);
+        break;
+      case 'alat komputer':
+        komputer[indexOfMonth] = quantity;
+        setKomputerData(komputer);
+        break;
+      case 'obat obatan':
+        obat[indexOfMonth] = quantity;
+        setObatData(obat);
+        break;
+      default:
+        lain[indexOfMonth] = otherQuantity;
+        setLainData(lain);
+        break;
+    }
+  }, []);
+
+  // ada kategori yang tidak tercover maka sekarang berusaha mencari solusi atas masalah ini
 
   const setChart = useCallback(() => {
-    orders.forEach((order) => {
-      order.carts.forEach((cart) => {
-        const { quantity, createdAt, productCategory } = cart;
-        const date = new Date(createdAt);
-        const getMonth = months[date.getMonth()];
-        // eslint-disable-next-line eqeqeq
-        const indexOfMonth = months.findIndex((month) => month == getMonth);
-        setStateData(indexOfMonth, productCategory, quantity);
-      });
+    stocks.forEach((stock) => {
+      const { quantity, createdAt, category, otherQuantity } = stock;
+      const date = new Date(createdAt);
+      const getMonth = months[date.getMonth()];
+      const indexOfMonth = months.findIndex((month) => month === getMonth);
+      setStateData(indexOfMonth, category, quantity, otherQuantity);
     });
-  }, [setStateData, orders]);
+  }, [setStateData, stocks]);
 
   useEffect(() => {
-    if (!orders) {
+    if (!stocks) {
       setLoading(true);
     } else {
       setChart();
       setLoading(false);
     }
-  }, [orders, setChart]);
+  }, [stocks, setChart]);
 
   return (
     <Box sx={{ padding: '2rem 1rem', height: { xs: 'auto', md: '32.5rem' } }}>

@@ -114,7 +114,7 @@ export default handler()
           mutations: stockIn.concat(stockOut).sort((a, b) => a.date.valueOf() - b.date.valueOf()),
         },
         mainStock: stockInMain - stockOutMain,
-        latestStock: stockInQuantity - stockOutQuantity,
+        latestStock: stockInMain - stockOutMain + stockInQuantity - stockOutQuantity,
       });
     } catch (error) {
       return res.status(500).json({ message: 'Something went wrong' });

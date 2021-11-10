@@ -29,6 +29,7 @@ export const getApiReportProduct = async (_, res) => {
         code: true,
         latestQuantity: true,
         description: true,
+        createdAt: true,
         category: {
           select: {
             title: true,
@@ -47,18 +48,20 @@ export const getApiReportProduct = async (_, res) => {
       },
     });
     const customProduct = products.map((product) => {
-      const latestProduct = product.stocks.reduce((a, b) => (a.createdAt > b.createdAt ? a : b));
+      const latestProduct =
+        product.stocks.length === 0 ? null : product.stocks.reduce((a, b) => (a.createdAt > b.createdAt ? a : b));
+
       const prod: Product = {
         id: product.id,
         name: product.name,
         code: product.code,
         category: product.category.title,
         productDesc: product.description,
-        stockDesc: latestProduct.description,
+        stockDesc: latestProduct ? latestProduct.description : product.description || '',
         latestQuantity: product.latestQuantity,
-        price: latestProduct.price,
-        date: latestProduct.createdAt,
-        value: latestProduct.price * product.latestQuantity,
+        price: latestProduct ? latestProduct.price : 0,
+        date: latestProduct ? latestProduct.createdAt : product.createdAt || new Date(),
+        value: latestProduct ? latestProduct.price * product.latestQuantity : 0,
       };
       return prod;
     });

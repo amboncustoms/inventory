@@ -27,7 +27,7 @@ export default handler()
       }
 
       const payload = { userId: user.id, username };
-      const jwt = sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
+      const jwt = sign(payload, process.env.JWT_SECRET, { expiresIn: 86400 });
 
       res.setHeader(
         'Set-Cookie',
@@ -35,7 +35,7 @@ export default handler()
           httpOnly: true,
           secure: process.env.NODE_ENV !== 'development',
           sameSite: 'strict',
-          maxAge: 33600,
+          maxAge: 86400,
           path: '/',
         })
       );

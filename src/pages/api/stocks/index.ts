@@ -48,6 +48,7 @@ export default handler()
           select: {
             price: true,
             quantity: true,
+            description: true,
             product: {
               select: {
                 id: true,
@@ -67,6 +68,7 @@ export default handler()
             productId: stock.product.id,
             price: stock.price,
             quantity: stock.quantity,
+            description,
             userId,
             category: stock.product.category.title,
             createdMonth: monthName[getMonth(new Date())],

@@ -4,70 +4,95 @@ import { Modal, Typography, Avatar, Button, Card, Divider, CardHeader, TextField
 import axios from 'axios';
 import Link from 'next/link';
 import { useMutation, useQueryClient } from 'react-query';
-import { ERule } from '@src/utils/types';
 
 type Rule = {
   activeStep?: number;
   allowAddToCart?: string;
-  user?: any;
+  userId?: any;
 };
 
 interface ModalProps {
   handler?: any;
-  notification?: any;
+  notifId?: string;
+  userId?: string;
   setOpen?: any;
   open?: boolean;
   type?: string;
   text?: string;
+  setIncartsUpdate?: any;
+  setOpenApprovalPopper?: any;
 }
 
-const GeneralModal: FC<ModalProps> = ({ handler, notification, setOpen, open, type, text }) => {
+function deleteLocalStorage(key: string) {
+  try {
+    if (typeof window !== 'undefined') {
+      window.localStorage.removeItem(key);
+    }
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error(err);
+  }
+}
+
+const GeneralModal: FC<ModalProps> = ({
+  handler,
+  notifId,
+  userId,
+  setOpen,
+  open,
+  type,
+  text,
+  setIncartsUpdate,
+  setOpenApprovalPopper,
+}) => {
   const [noteValue, setNoteValue] = useState('');
   const queryClient = useQueryClient();
   const handleModalClose = () => {
     setOpen(false);
   };
+  const setActiveStepMutation = useMutation(
+    (data: Rule) => {
+      return axios.patch('/api/rules', data);
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('rules');
+      },
+    }
+  );
 
   const setActiveStep = async (value, theUser) => {
-    const mutation = useMutation(
-      (data: Rule) => {
-        return axios.patch('/api/rules', data);
-      },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries('rules');
-        },
-      }
-    );
-    mutation.mutate({ activeStep: value, user: theUser });
+    setActiveStepMutation.mutate({ activeStep: value, userId: theUser });
   };
+
+  const setAllowMutation = useMutation(
+    (data: Rule) => {
+      return axios.patch('/api/rules', data);
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('rules');
+      },
+    }
+  );
 
   const setAllowAddToCart = async (value, theUser) => {
-    const mutation = useMutation(
-      (data: Rule) => {
-        return axios.patch('/api/rules', data);
-      },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries('rules');
-        },
-      }
-    );
-    mutation.mutate({ allowAddToCart: value, user: theUser });
+    setAllowMutation.mutate({ allowAddToCart: value, userId: theUser });
   };
 
-  const setRejection = async (id, note) => {
-    const mutation = useMutation(
-      (data: { note: string }) => {
-        return axios.patch(`/api/notifs/stockout/rejection/${id}`, data);
+  const rejectMutation = useMutation(
+    (data: { note: string; id: string }) => {
+      return axios.patch(`/api/notifs/stockout/rejection/${data.id}`, { note: data.note });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('rules');
       },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries('rules');
-        },
-      }
-    );
-    mutation.mutate({ note });
+    }
+  );
+
+  const setRejection = async (id, note) => {
+    rejectMutation.mutate({ note, id });
   };
 
   const handleNext = () => {
@@ -76,11 +101,21 @@ const GeneralModal: FC<ModalProps> = ({ handler, notification, setOpen, open, ty
   };
 
   const handleReject = async (id) => {
-    setRejection(id, noteValue);
-    setActiveStep(1, notification.user);
-    setAllowAddToCart(ERule.ALLOW, notification.user);
-    handleModalClose();
-    queryClient.invalidateQueries('notifs');
+    setRejection(id, noteValue)
+      .then(() => {
+        setActiveStep(1, userId);
+        setAllowAddToCart('ALLOW', userId);
+      })
+      .catch((err) => {
+        throw new Error(err);
+      })
+      .finally(() => {
+        setIncartsUpdate([]);
+        deleteLocalStorage('incarts');
+        handleModalClose();
+        setOpenApprovalPopper(false);
+        queryClient.invalidateQueries('notifs');
+      });
   };
   return (
     <Modal
@@ -115,7 +150,21 @@ const GeneralModal: FC<ModalProps> = ({ handler, notification, setOpen, open, ty
             }
             title={type === 'auth' ? 'PERHATIAN !' : type === 'reject' ? 'CATATAN' : 'KONFIRMASI'}
           />
+
           <Divider />
+          {type === 'reject' && (
+            <div
+              style={{
+                display: 'flex',
+                padding: '1rem 0 0 0 ',
+                justifyContent: 'center',
+              }}
+            >
+              <Typography variant="caption" align="center">
+                Silahkan mengisi alasan penolakan, dankee.
+              </Typography>
+            </div>
+          )}
           <div
             style={{
               display: 'flex',
@@ -160,7 +209,7 @@ const GeneralModal: FC<ModalProps> = ({ handler, notification, setOpen, open, ty
                   <Button
                     variant="contained"
                     color={type === 'reject' ? 'secondary' : 'primary'}
-                    onClick={type === 'reject' ? () => handleReject(notification.id) : handleNext}
+                    onClick={type === 'reject' ? () => handleReject(notifId) : handleNext}
                   >
                     {type === 'reject' ? 'Kirimkan' : 'Ya'}
                   </Button>

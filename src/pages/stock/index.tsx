@@ -1,37 +1,60 @@
-import React from 'react';
-import { Queue, Search } from '@mui/icons-material';
-import { Button, Grid, Paper, InputBase, IconButton } from '@mui/material';
+import React, { useState } from 'react';
+import { Search, Category, PostAdd, Summarize } from '@mui/icons-material';
+import { Grid, Paper, InputBase, IconButton, ButtonGroup, Tooltip, Button, Box } from '@mui/material';
 import { PrismaClient } from '@prisma/client';
 import { verify } from 'jsonwebtoken';
 import { GetServerSideProps } from 'next';
+import CategoryDialog from '@src/components/stock/dialog/CategoryDialog';
+import ProductDialog from '@src/components/stock/dialog/ProductDialog';
+import StockDialog from '@src/components/stock/dialog/StockDialog';
+import MobileAppbar from '@src/components/stock/MobileAppbar';
 import StockTable from '@src/components/stock/StockTable';
-// import { getApiReportProduct } from '../api/reports/products';
-// import StockAppbar from '@src/components/stock/StockAppbar';
 
 const Stock = () => {
+  const [openCategory, setOpenCategory] = useState(false);
+  const [openProduct, setOpenProduct] = useState(false);
+  const [openStock, setOpenStock] = useState(false);
+  const [revalidateProduct, setRevalidateProduct] = useState(false);
+  const [revalidateStock, setRevalidateStock] = useState(false);
+  const [filterFn, setFilterFn] = useState({ fn: (items) => items });
+
+  const handleSearch = (event) => {
+    const target = event.target.value;
+    setFilterFn({
+      fn: (items) => {
+        if (target === '') return items;
+        return items.filter((i) => i.name.toLowerCase().includes(target));
+      },
+    });
+  };
+
+  const ActionButtons = () => {
+    return (
+      <ButtonGroup variant="contained" size="small">
+        <Tooltip title="Tambah Kategori" placement="top">
+          <Button onClick={() => setOpenCategory(true)}>
+            <Category />
+          </Button>
+        </Tooltip>
+        <Tooltip title="Tambah Barang" placement="top">
+          <Button onClick={() => setOpenProduct(true)}>
+            <Summarize />
+          </Button>
+        </Tooltip>
+        <Tooltip title="Tambah Stok" placement="top">
+          <Button onClick={() => setOpenStock(true)}>
+            <PostAdd />
+          </Button>
+        </Tooltip>
+      </ButtonGroup>
+    );
+  };
   return (
     <>
       <div style={{ width: '100%' }}>
-        {/* <Box sx={{ display: { xs: 'flex', md: 'none' }, justifyContent: 'center' }}>
-          <StockAppbar />
-          <div
-            style={{
-              display: 'flex',
-              width: '100%',
-              margin: '5rem 0 1.5rem',
-              justifyContent: 'space-between',
-              maxWidth: '17rem',
-            }}
-          >
-            <Button variant="contained" color="primary" startIcon={<Queue />} style={{ marginRight: '1rem' }}>
-              Kategori
-            </Button>
-
-            <Button variant="contained" color="primary" startIcon={<Queue />}>
-              Produk
-            </Button>
-          </div>
-        </Box> */}
+        <Box sx={{ display: { xs: 'flex', md: 'none' }, justifyContent: 'center' }}>
+          <MobileAppbar handleSearch={handleSearch} />
+        </Box>
         <Grid container style={{ flexGrow: 1 }} sx={{ display: { xs: 'none', md: 'flex' }, width: '100%' }}>
           <Grid
             item
@@ -53,10 +76,11 @@ const Stock = () => {
                 width: { xs: '17rem', md: '25rem' },
                 height: 40,
                 borderRadius: 20,
+                border: '1px solid #E5E8EC',
               }}
               elevation={0}
             >
-              <InputBase style={{ marginLeft: '1rem', flex: 1 }} placeholder="Cari..." />
+              <InputBase style={{ marginLeft: '1rem', flex: 1 }} placeholder="Cari..." onChange={handleSearch} />
               <IconButton style={{ padding: 10 }} aria-label="search">
                 <Search />
               </IconButton>
@@ -73,58 +97,20 @@ const Stock = () => {
               margin: { xs: '1.5rem 0 1.5rem', md: '0 0 1.5rem' },
             }}
           >
-            <div
-              style={{
-                display: 'flex',
-                width: '100%',
-                justifyContent: 'space-between',
-                maxWidth: '17rem',
-              }}
-            >
-              <Button variant="contained" color="primary" startIcon={<Queue />} style={{ marginRight: '1rem' }}>
-                Kategori
-              </Button>
-
-              <Button variant="contained" color="primary" startIcon={<Queue />}>
-                Produk
-              </Button>
-            </div>
+            <ActionButtons />
           </Grid>
         </Grid>
-        {/* <Modal
-          className={classes.modal}
-          open={openAddProduct}
-          onClose={handleAddProductClose}
-          closeAfterTransition
-          BackdropComponent={Backdrop}
-          BackdropProps={{
-            timeout: 500,
-          }}
-        >
-          <div>
-            <Product
-              handleClose={handleAddProductClose}
-              revalidate={revalidateProducts}
-              setDataToExport={setDataToExport}
-            />
-          </div>
-        </Modal>
-        <Modal
-          className={classes.modal}
-          open={openAddCategory}
-          onClose={handleAddCategoryClose}
-          closeAfterTransition
-          BackdropComponent={Backdrop}
-          BackdropProps={{
-            timeout: 500,
-          }}
-        >
-          <div>
-            <Category handleClose={handleAddCategoryClose} revalidate={revalidateProducts} />
-          </div>
-        </Modal> */}
-        <StockTable />
+        <StockTable
+          revalidateProduct={revalidateProduct}
+          setRevalidateProduct={setRevalidateProduct}
+          revalidateStock={revalidateStock}
+          setRevalidateStock={setRevalidateStock}
+          filterFn={filterFn}
+        />
       </div>
+      <CategoryDialog openCategory={openCategory} setOpenCategory={setOpenCategory} />
+      <ProductDialog openProduct={openProduct} setOpenProduct={setOpenProduct} setRevalidate={setRevalidateProduct} />
+      <StockDialog openStock={openStock} setOpenStock={setOpenStock} setRevalidate={setRevalidateStock} />
     </>
   );
 };

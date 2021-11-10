@@ -1,4 +1,5 @@
-import React, { useState, FC, useContext } from 'react';
+/* eslint-disable react/jsx-no-bind */
+import React, { useState, FC, useContext, useRef } from 'react';
 import {
   FeaturedPlayList as FeaturedPlayListIcon,
   AllInbox as AllInboxIcon,
@@ -22,13 +23,21 @@ import {
   Popper,
   Fade,
   Paper,
+  Menu,
+  MenuItem,
+  Alert as MUIAlert,
+  Snackbar,
+  AlertProps,
 } from '@mui/material';
 import axios from 'axios';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useQuery } from 'react-query';
+import { useAuthState } from '@src/contexts/auth';
 import { CartContext } from '@src/contexts/cart';
+import BottomNav from './bottomNavbar/BottomNav';
+import MenuPopper from './bottomNavbar/MenuPopper';
 import Notification from './notif';
 
 const IconButton = dynamic(() => import('@mui/material/IconButton'), { ssr: false });
@@ -45,8 +54,12 @@ const getNotifs = async () => {
   const { data } = await axios.get('/api/notifs');
   return data;
 };
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
+  return <MUIAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const CustomDrawer: FC<Props> = (props) => {
+  const { user } = useAuthState();
   const { data: notifs, isSuccess } = useQuery('notifs', getNotifs, {
     staleTime: 3000,
   });
@@ -57,6 +70,41 @@ const CustomDrawer: FC<Props> = (props) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [openPopper, setOpenPopper] = useState(false);
+  const [errors, setErrors] = useState(null);
+  const [openSnack, setOpenSnack] = useState(false);
+  const { authenticated } = useAuthState();
+  const [anchorElPopperMobile, setAnchorElPopperMobile] = useState(null);
+  const [openPopperMobile, setOpenPopperMobile] = useState(false);
+
+  const popperHandlerMobile = (event) => {
+    setAnchorElPopperMobile(event.currentTarget);
+    setOpenPopperMobile((prev) => !prev);
+  };
+  //
+  const [anchorElProfile, setAnchorElProfile] = React.useState<null | HTMLElement>(null);
+
+  const isMenuOpen = Boolean(anchorElProfile);
+  const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElProfile(event.currentTarget);
+  };
+  const logoutHandler = () => {
+    axios
+      .get('/api/auth/logout')
+      .then(() => {
+        router.push('/login');
+      })
+      .catch((error) => {
+        if (authenticated) {
+          setErrors(error.response.data);
+        }
+        router.push('/login');
+      });
+  };
+  const handleMenuClose = () => {
+    logoutHandler();
+    setAnchorElProfile(null);
+  };
+
   const popperHandler = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
     setOpenPopper((prev) => !prev);
@@ -65,6 +113,31 @@ const CustomDrawer: FC<Props> = (props) => {
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
+
+  // BOTTOM MENU POPPER
+  const [openBottomPopper, setOpenBottomPopper] = useState(false);
+  const bottomPopperAnchorRef = useRef(null);
+
+  const handleToggleBottomPopper = () => {
+    setOpenBottomPopper((prevOpen) => !prevOpen);
+  };
+
+  // const handleCloseBottomPopper = (event) => {
+  //   if (bottomPopperAnchorRef.current && bottomPopperAnchorRef.current.contains(event.target)) {
+  //     return;
+  //   }
+
+  //   setOpenBottomPopper(false);
+  // };
+
+  function handleListKeyDown(event) {
+    if (event.key === 'Tab') {
+      event.preventDefault();
+      setOpenBottomPopper(false);
+    }
+  }
+
+  // END BOTTOM MENU POPPER
   const popperId = openPopper ? 'notif-popper' : undefined;
 
   const getListStyle = (pathname: string) => {
@@ -86,6 +159,26 @@ const CustomDrawer: FC<Props> = (props) => {
       },
     };
   };
+
+  const renderMenu = (
+    <Menu
+      anchorEl={anchorElProfile}
+      anchorOrigin={{
+        vertical: 'top',
+        horizontal: 'right',
+      }}
+      id="menu-profile"
+      keepMounted
+      transformOrigin={{
+        vertical: 'top',
+        horizontal: 'right',
+      }}
+      open={isMenuOpen}
+      onClose={handleMenuClose}
+    >
+      <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+    </Menu>
+  );
 
   const drawer = (
     <div
@@ -116,14 +209,16 @@ const CustomDrawer: FC<Props> = (props) => {
             <ListItemText>Gallery</ListItemText>
           </ListItem>
         </Link>
-        <Link href="/stock" passHref>
-          <ListItem component="a" sx={getListStyle('/stock')}>
-            <ListItemIcon>
-              <FeaturedPlayListIcon style={{ color: 'white' }} />
-            </ListItemIcon>
-            <ListItemText>Stock</ListItemText>
-          </ListItem>
-        </Link>
+        {user?.role !== 'USER' && (
+          <Link href="/stock" passHref>
+            <ListItem component="a" sx={getListStyle('/stock')}>
+              <ListItemIcon>
+                <FeaturedPlayListIcon style={{ color: 'white' }} />
+              </ListItemIcon>
+              <ListItemText>Stock</ListItemText>
+            </ListItem>
+          </Link>
+        )}
       </List>
     </div>
   );
@@ -160,7 +255,7 @@ const CustomDrawer: FC<Props> = (props) => {
           </IconButton> */}
 
           <Typography variant="h5" noWrap component="div" color="#757575" style={{ width: '100%' }}>
-            Customs Office
+            Customs Office Inventory
           </Typography>
           <Box
             sx={{
@@ -229,12 +324,63 @@ const CustomDrawer: FC<Props> = (props) => {
                   </IconButton>
                 </a>
               </Link>
-              <IconButton edge="end" aria-label="account of current user" aria-haspopup="true" color="inherit">
+              <IconButton
+                edge="end"
+                aria-label="account of current user"
+                aria-haspopup="true"
+                color="inherit"
+                onClick={handleProfileMenuOpen}
+              >
                 <AccountCircle color="primary" />
               </IconButton>
             </div>
           </Box>
         </Toolbar>
+      </AppBar>
+      <AppBar
+        position="fixed"
+        sx={{
+          top: 'auto',
+          bottom: 0,
+          display: { md: 'none' },
+        }}
+      >
+        <BottomNav handleToggle={handleToggleBottomPopper} notifs={notifs} />
+        <MenuPopper
+          notifs={notifs}
+          openBottomPopper={openBottomPopper}
+          handleListKeyDown={handleListKeyDown}
+          bottomPopperAnchorRef={bottomPopperAnchorRef}
+          popperHandler={popperHandlerMobile}
+          handleProfileMenuOpen={handleProfileMenuOpen}
+        />
+        <Popper
+          style={{
+            position: 'fixed',
+            marginBottom: '1.8rem',
+            marginRight: '.5rem',
+          }}
+          open={openPopperMobile}
+          anchorEl={anchorElPopperMobile}
+          transition
+          placement="left"
+          disablePortal
+        >
+          {({ TransitionProps }) => (
+            <Fade {...TransitionProps} timeout={350}>
+              <Paper
+                style={{
+                  padding: '1rem',
+                  maxHeight: '22rem',
+                  width: '21rem',
+                  overflow: 'auto',
+                }}
+              >
+                <Notification setOpenPopper={setOpenPopperMobile} />
+              </Paper>
+            </Fade>
+          )}
+        </Popper>
       </AppBar>
       <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }} aria-label="mailbox folders">
         {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
@@ -277,6 +423,17 @@ const CustomDrawer: FC<Props> = (props) => {
         <Toolbar />
         <main>{children}</main>
       </Box>
+      {renderMenu}
+      <Snackbar
+        open={openSnack}
+        autoHideDuration={6000}
+        onClose={() => setOpenSnack(false)}
+        anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
+      >
+        <Alert onClose={() => setOpenSnack(false)} severity="error" sx={{ width: '100%' }}>
+          {`Mohon maaf terjadi error : ${errors?.message}`}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

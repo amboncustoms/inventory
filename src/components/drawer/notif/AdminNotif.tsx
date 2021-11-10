@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NotificationsActive } from '@mui/icons-material';
 import { Card, CardHeader, Avatar, CardActions, Button, Divider, Dialog, DialogContent } from '@mui/material';
 import ApprovalPopper from '@src/components/modal/ApprovalPopper';
@@ -15,7 +15,7 @@ const AdminNotif = ({ notif }) => {
   };
 
   const descriptionElementRef = React.useRef<HTMLElement>(null);
-  React.useEffect(() => {
+  useEffect(() => {
     if (open) {
       const { current: descriptionElement } = descriptionElementRef;
       if (descriptionElement !== null) {

@@ -57,6 +57,9 @@ export const getApiNotifs = async (req, res) => {
             {
               status: 'READY',
             },
+            {
+              status: 'REJECTED',
+            },
           ],
         },
         include: {

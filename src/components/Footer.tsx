@@ -1,6 +1,6 @@
 import React from 'react';
 import { Instagram, Language, Facebook, Twitter } from '@mui/icons-material';
-import { Container, Typography, Divider, IconButton } from '@mui/material';
+import { Container, Typography, Divider, IconButton, Box } from '@mui/material';
 
 function Copyright() {
   return (
@@ -13,7 +13,7 @@ function Copyright() {
 
 export default function Footer() {
   return (
-    <footer style={{ backgroundColor: 'inherit', bottom: 0, padding: '3rem 0 1rem' }}>
+    <Box sx={{ backgroundColor: 'inherit', bottom: 0, padding: '3rem 0 1rem', marginBottom: { xs: '2rem' } }}>
       <Container maxWidth="lg">
         <Typography variant="subtitle1" align="center" color="textSecondary" component="p">
           {/* eslint-disable jsx-a11y/accessible-emoji */}
@@ -62,6 +62,6 @@ export default function Footer() {
           </div>
         </div>
       </Container>
-    </footer>
+    </Box>
   );
 }

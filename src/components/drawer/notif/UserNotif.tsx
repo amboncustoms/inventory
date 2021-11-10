@@ -15,11 +15,10 @@ import axios from 'axios';
 import Link from 'next/link';
 import { useMutation, useQueryClient } from 'react-query';
 import Loading from '@src/components/Loading';
-import { useAuthState } from '@src/contexts/auth';
 import NotifDetail from './NotifDetail';
 
 const UserNotif = ({ notif, isSuccess }) => {
-  const { user } = useAuthState();
+  // const { user } = useAuthState();
   const { status, id: notifId, userId, user: notifUser } = notif;
   const [loading, setLoading] = useState(true);
   const [incart, setIncart] = useState([]);
@@ -42,7 +41,7 @@ const UserNotif = ({ notif, isSuccess }) => {
   const queryClient = useQueryClient();
   const deleteNotifMutation = useMutation(
     (id) => {
-      return axios.delete(`/api/notifs/rejection${id}`);
+      return axios.delete(`/api/notifs/stockout/rejection/${id}`);
     },
     {
       onSuccess: () => {
@@ -95,7 +94,7 @@ const UserNotif = ({ notif, isSuccess }) => {
           >
             Detail
           </Button>
-          {status !== 'REJECTED' && user.id === userId && (
+          {status === 'READY' && (
             <Link href="/cart" passHref>
               <Button size="small" color="primary">
                 Go to cart

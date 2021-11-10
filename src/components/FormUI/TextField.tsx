@@ -10,7 +10,10 @@ const TextFieldWrapper = ({ name, ...otherProps }) => {
     ...otherProps,
     variant: 'outlined' as const,
     error: false,
+    fullWidth: true,
+    size: 'small' as const,
     helperText: null,
+    margin: 'normal' as const,
   };
 
   if (meta && meta.touched && meta.error) {

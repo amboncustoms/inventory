@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search as SearchIcon } from '@mui/icons-material';
 import {
   InputLabel,
@@ -14,9 +14,12 @@ import {
 import axios from 'axios';
 import { verify } from 'jsonwebtoken';
 import { GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
 import { useQuery } from 'react-query';
+import MobileAppbar from '@src/components/home/MobileAppbar';
 import Products from '@src/components/home/Products';
-import { Product } from '@src/utils/types';
+import Loading from '@src/components/Loading';
+import { useAuthState } from '@src/contexts/auth';
 import { PrismaClient } from '.prisma/client';
 
 // icons
@@ -35,13 +38,29 @@ const gallery = () => {
     data: products,
     isLoading,
     isSuccess,
-  } = useQuery<Product[], Error>('products', getProducts, {
+  } = useQuery('products', getProducts, {
+    staleTime: 3000,
+  });
+  const router = useRouter();
+  const { authenticated } = useAuthState();
+
+  const {
+    data: categories,
+    isSuccess: catSuccess,
+    isError,
+  } = useQuery('categories', getCategories, {
     staleTime: 3000,
   });
 
-  const { data: categories, isSuccess: catSuccess } = useQuery('categories', getCategories, {
-    staleTime: 3000,
-  });
+  useEffect(() => {
+    if (isError) {
+      if (authenticated) {
+        throw new Error();
+      } else {
+        router.push('/login');
+      }
+    }
+  }, [isError]);
 
   const postsPerPage = 8;
   const [category, setCategory] = useState('');
@@ -74,78 +93,95 @@ const gallery = () => {
     });
   };
   return (
-    <>
-      <Box>
-        <Box
+    <Box>
+      <Box
+        sx={{
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          display: { xs: 'flex', md: 'none' },
+        }}
+      >
+        <MobileAppbar
+          category={category}
+          categories={categories}
+          handleCategoryFilter={handleCategoryFilter}
+          handleSearch={handleSearch}
+        />
+      </Box>
+      <Box
+        sx={{
+          display: { xs: 'none', md: 'flex' },
+          justifyContent: { md: 'space-between' },
+          alignItems: { md: 'center' },
+        }}
+      >
+        <Paper
+          component="form"
           sx={{
+            padding: '2px 4px',
             display: 'flex',
-            justifyContent: 'space-between',
             alignItems: 'center',
+            height: 40,
+            borderRadius: 5,
+            width: '25rem',
+            border: '1px solid #E5E8EC',
+            marginBottom: 0,
           }}
+          elevation={0}
         >
-          <Paper
-            component="form"
+          <InputBase
             sx={{
-              padding: '2px 4px',
-              display: 'flex',
-              alignItems: 'center',
-              height: 40,
-              borderRadius: 5,
-              width: '25rem',
-              border: '1px solid #E5E8EC',
-              marginBottom: 0,
+              flex: 1,
+              marginLeft: '1rem',
             }}
-            elevation={0}
-          >
-            <InputBase
-              sx={{
-                flex: 1,
-                marginLeft: '1rem',
-              }}
-              placeholder="Cari..."
-              onChange={handleSearch}
-            />
-            <IconButton style={{ padding: 10 }} aria-label="search" size="small">
-              <SearchIcon />
-            </IconButton>
-          </Paper>
-          <Paper
-            component="form"
-            style={{
-              height: '40px',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              padding: 0,
-              width: '14rem',
-            }}
-            elevation={0}
-          >
-            <FormControl variant="outlined" sx={{ minWidth: '14rem', margin: '1rem' }} size="small">
-              <InputLabel id="demo-simpl">Kategori</InputLabel>
-              <Select
-                labelId="demo-simpl"
-                id="demo-simpl"
-                value={category}
-                onChange={(e) => handleCategoryFilter(e.target.value)}
-                label="Category"
-                style={{ textTransform: 'capitalize', borderRadius: 5 }}
-              >
-                <MenuItem value="">
-                  <em>None</em>
-                </MenuItem>
-                {catSuccess &&
-                  categories?.map((cat) => (
-                    <MenuItem key={cat.id} value={cat.title} style={{ textTransform: 'capitalize' }}>
-                      {cat.title}
-                    </MenuItem>
-                  ))}
-              </Select>
-            </FormControl>
-          </Paper>
-        </Box>
-        <Box style={{ marginTop: '2rem' }}>
-          {isSuccess && (
+            placeholder="Cari..."
+            onChange={handleSearch}
+          />
+          <IconButton style={{ padding: 10 }} aria-label="search" size="small">
+            <SearchIcon />
+          </IconButton>
+        </Paper>
+        <Paper
+          component="form"
+          style={{
+            height: '40px',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: 0,
+            width: '14rem',
+          }}
+          elevation={0}
+        >
+          <FormControl variant="outlined" sx={{ minWidth: '14rem', margin: '1rem' }} size="small">
+            <InputLabel id="demo-simpl">Kategori</InputLabel>
+            <Select
+              labelId="demo-simpl"
+              id="demo-simpl"
+              value={category}
+              onChange={(e) => handleCategoryFilter(e.target.value)}
+              label="Category"
+              style={{ textTransform: 'capitalize', borderRadius: 5 }}
+            >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              {catSuccess &&
+                categories?.map((cat) => (
+                  <MenuItem key={cat.id} value={cat.title} style={{ textTransform: 'capitalize' }}>
+                    {cat.title}
+                  </MenuItem>
+                ))}
+            </Select>
+          </FormControl>
+        </Paper>
+      </Box>
+      <Box sx={{ marginTop: { md: '2rem' } }}>
+        {isLoading ? (
+          <Loading />
+        ) : (
+          isSuccess && (
             <Products
               products={filterFn
                 .fn(filterFc.fc(products))
@@ -153,29 +189,28 @@ const gallery = () => {
               isLoading={isLoading}
               isSuccess={isSuccess}
             />
-          )}
-        </Box>
-
-        <Box
-          style={{
-            marginTop: '4rem',
-            marginBottom: '2rem',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <Pagination
-            count={numberOfPage}
-            variant="outlined"
-            shape="rounded"
-            color="primary"
-            page={currentPage}
-            onChange={handlePageChange}
-          />
-        </Box>
+          )
+        )}
       </Box>
-    </>
+      <Box
+        style={{
+          marginTop: '4rem',
+          marginBottom: '2rem',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <Pagination
+          count={numberOfPage}
+          variant="outlined"
+          shape="rounded"
+          color="primary"
+          page={currentPage}
+          onChange={handlePageChange}
+        />
+      </Box>
+    </Box>
   );
 };
 
@@ -193,7 +228,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
         },
       };
     }
-
     const { authorization } = req.cookies;
     const { userId }: any = verify(authorization, process.env.JWT_SECRET);
     await prisma.user.findUnique({ where: { id: userId } });
