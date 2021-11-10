@@ -37,6 +37,7 @@
     "jsonwebtoken": "^8.5.1",
     "localbase": "^0.7.5",
     "localforage": "^1.10.0",
+    "mock-aws-s3": "^4.0.2",
     "next": "11.1.2",
     "next-connect": "^0.10.2",
     "react": "17.0.2",
