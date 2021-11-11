@@ -14,7 +14,7 @@ export const categories = [
     products: {
       create: [
         {
-          code: '112211',
+          code: '1016862',
           description: 'alat kebersihan bagus',
           name: 'kain pel',
           latestQuantity: 50,
@@ -27,9 +27,9 @@ export const categories = [
           },
         },
         {
-          code: '112222',
+          code: '0384048',
           description: 'alat kebersihan bagus',
-          name: 'kanebo kering',
+          name: 'sabun lantai',
           latestQuantity: 50,
           stocks: {
             create: {
@@ -47,7 +47,7 @@ export const categories = [
     products: {
       create: [
         {
-          code: '113311',
+          code: '8EAB1DC',
           description: 'alat komputer bagus',
           name: 'SSD 256 GB',
           latestQuantity: 50,
@@ -60,7 +60,20 @@ export const categories = [
           },
         },
         {
-          code: '113322',
+          code: '71F8F59',
+          description: 'alat komputer bagus',
+          name: 'Hardisk 500 GB',
+          latestQuantity: 50,
+          stocks: {
+            create: {
+              description: 'Hardisk bagus',
+              price: 13265,
+              quantity: 50,
+            },
+          },
+        },
+        {
+          code: '756479R',
           description: 'alat komputer bagus',
           name: 'Hardisk 500 GB',
           latestQuantity: 50,
@@ -80,9 +93,9 @@ export const categories = [
     products: {
       create: [
         {
-          code: '114422',
+          code: '019E446',
           description: 'alat kendaraan bagus',
-          name: 'Stella Mobil Kaca',
+          name: 'Pewangi kendaraan',
           latestQuantity: 50,
           stocks: {
             create: {
@@ -93,9 +106,9 @@ export const categories = [
           },
         },
         {
-          code: '114411',
+          code: '1F840CB',
           description: 'alat kendaraan bagus',
-          name: 'Ban Auldi',
+          name: 'Ban tubles',
           latestQuantity: 50,
           stocks: {
             create: {
@@ -106,9 +119,9 @@ export const categories = [
           },
         },
         {
-          code: '114433',
+          code: 'C2475B0',
           description: 'alat kendaraan bagus',
-          name: 'Knalpot racing',
+          name: 'Knalpot AHM',
           latestQuantity: 50,
           stocks: {
             create: {
@@ -126,7 +139,7 @@ export const categories = [
     products: {
       create: [
         {
-          code: '115511',
+          code: 'A695DD2',
           description: 'alat kendaraan bagus',
           name: 'Minyak Kayu Putih',
           latestQuantity: 50,
@@ -139,7 +152,7 @@ export const categories = [
           },
         },
         {
-          code: '115522',
+          code: 'C43234A',
           description: 'obat obatan bagus',
           name: 'Minyak Telon',
           latestQuantity: 50,
@@ -159,7 +172,7 @@ export const categories = [
     products: {
       create: [
         {
-          code: '116611',
+          code: 'CA5E421',
           description: 'alat listrik bagus',
           name: 'Bohlam LED',
           latestQuantity: 50,
@@ -172,9 +185,9 @@ export const categories = [
           },
         },
         {
-          code: '116622',
+          code: 'AA3442',
           description: 'alat listrik bagus',
-          name: 'Bohlam LED 5W',
+          name: 'Fuse tabung kaca',
           latestQuantity: 50,
           stocks: {
             create: {
@@ -193,7 +206,7 @@ export const categories = [
     products: {
       create: [
         {
-          code: '116611',
+          code: '4225E84',
           description: 'alat tulis kantor bagus',
           name: 'Pensil',
           latestQuantity: 50,
@@ -206,7 +219,7 @@ export const categories = [
           },
         },
         {
-          code: '116633',
+          code: '9D14499',
           description: 'alat tulis kantor bagus',
           name: 'Pulpen',
           latestQuantity: 50,
@@ -230,13 +243,13 @@ export const users = [
     fullname: 'Tama Gotchi',
   },
   {
-    username: 'kasubbagumum',
+    username: 'ksbu',
     password: '123',
     fullname: 'Kasubbag Umum',
     role: Role.KSBU,
   },
   {
-    username: 'rumahtangga',
+    username: 'rt',
     password: '123',
     fullname: 'Rumah Tangga',
     role: Role.RT,

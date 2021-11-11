@@ -173,7 +173,7 @@ const Detail = () => {
                 Deskripsi
               </TableCell>
               <TableCell align="left" style={{ width: '70%' }}>
-                {stock?.data?.description}
+                {stock?.data?.description ? stock?.data?.description : '-'}
               </TableCell>
             </TableRow>
             <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
