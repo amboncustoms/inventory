@@ -151,7 +151,7 @@ function Row(props) {
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: '2rem' }}>
-              <Table aria-label="purchases" style={{ border: '1px solid #E5E8EC' }}>
+              <Table aria-label="purchases" style={{ border: '1px solid #041A4D' }}>
                 <TableHead>
                   <TableRow>
                     <TableCell align="center">Kode Barang</TableCell>
@@ -246,14 +246,14 @@ export default function CollapsibleTable({ userId, setOpen, notifId }) {
     <Paper
       style={{
         borderRadius: 10,
-        border: '1px solid #E5E8EC',
+        border: '1px solid #041A4D',
         padding: '1rem 2rem 2rem',
       }}
       elevation={0}
     >
       <CardHeader
         avatar={
-          <Avatar aria-label="recipe" style={{ backgroundColor: '#9500ae' }}>
+          <Avatar aria-label="recipe" style={{ backgroundColor: '#041A4D' }}>
             <FilterTiltShift style={{ color: 'white' }} />
           </Avatar>
         }
@@ -262,7 +262,7 @@ export default function CollapsibleTable({ userId, setOpen, notifId }) {
       <Paper
         style={{
           borderRadius: 10,
-          border: '1px solid #E5E8EC',
+          border: '1px solid #041A4D',
           margin: '1rem 0 2rem 0',
         }}
         elevation={0}
@@ -270,7 +270,7 @@ export default function CollapsibleTable({ userId, setOpen, notifId }) {
         <TableContainer component="div" style={{ borderRadius: 10 }}>
           <Table aria-label="collapsible table" size="small">
             <TableHead>
-              <TableRow style={{ backgroundColor: '#aa33be' }}>
+              <TableRow style={{ backgroundColor: '#041A4D' }}>
                 <TableCell />
                 <TableCell align="center" style={{ color: '#fff' }}>
                   No

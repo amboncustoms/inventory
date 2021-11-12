@@ -17,7 +17,7 @@ export const categories = [
           code: '1016862',
           description: 'alat kebersihan bagus',
           name: 'kain pel',
-          latestQuantity: 50,
+          latestQuantity: 0,
           stocks: {
             create: {
               description: 'kain pel bagus',
@@ -30,7 +30,7 @@ export const categories = [
           code: '0384048',
           description: 'alat kebersihan bagus',
           name: 'sabun lantai',
-          latestQuantity: 50,
+          latestQuantity: 0,
           stocks: {
             create: {
               description: 'kanebo kering bagus',
@@ -50,7 +50,7 @@ export const categories = [
           code: '8EAB1DC',
           description: 'alat komputer bagus',
           name: 'SSD 256 GB',
-          latestQuantity: 50,
+          latestQuantity: 0,
           stocks: {
             create: {
               description: 'SSD bagus',
@@ -63,7 +63,7 @@ export const categories = [
           code: '71F8F59',
           description: 'alat komputer bagus',
           name: 'Hardisk 500 GB',
-          latestQuantity: 50,
+          latestQuantity: 0,
           stocks: {
             create: {
               description: 'Hardisk bagus',
@@ -76,7 +76,7 @@ export const categories = [
           code: '756479R',
           description: 'alat komputer bagus',
           name: 'Hardisk 500 GB',
-          latestQuantity: 50,
+          latestQuantity: 0,
           stocks: {
             create: {
               description: 'Hardisk bagus',
@@ -96,7 +96,7 @@ export const categories = [
           code: '019E446',
           description: 'alat kendaraan bagus',
           name: 'Pewangi kendaraan',
-          latestQuantity: 50,
+          latestQuantity: 0,
           stocks: {
             create: {
               description: 'Stella Mobil Kaca bagus',

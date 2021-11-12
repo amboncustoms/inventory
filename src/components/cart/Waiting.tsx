@@ -28,7 +28,7 @@ const Waiting = () => {
             height: '19rem',
           }}
         >
-          <ClockLoader color="#9500ae" size={200} />
+          <ClockLoader color="#041A4D" size={200} />
         </div>
       </div>
     </div>

@@ -273,7 +273,7 @@ export default function CollapsibleTable({ userId, setOpen, notifId }) {
     >
       <CardHeader
         avatar={
-          <Avatar aria-label="recipe" style={{ backgroundColor: '#9500ae' }}>
+          <Avatar aria-label="recipe" style={{ backgroundColor: '#041A4D' }}>
             <FilterTiltShift style={{ color: 'white' }} />
           </Avatar>
         }
@@ -290,7 +290,7 @@ export default function CollapsibleTable({ userId, setOpen, notifId }) {
         <TableContainer component="div" style={{ borderRadius: 10 }}>
           <Table aria-label="collapsible table" size="small">
             <TableHead>
-              <TableRow style={{ backgroundColor: '#aa33be' }}>
+              <TableRow style={{ backgroundColor: '#041A4D' }}>
                 <TableCell />
                 <TableCell align="center" style={{ color: '#fff' }}>
                   No

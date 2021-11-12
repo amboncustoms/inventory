@@ -117,7 +117,7 @@ const Detail = () => {
     >
       <CardHeader
         avatar={
-          <Avatar aria-label="recipe" style={{ backgroundColor: '#9500ae' }}>
+          <Avatar aria-label="recipe" style={{ backgroundColor: '#041A4D' }}>
             <ListAlt style={{ color: 'white' }} />
           </Avatar>
         }
@@ -134,7 +134,7 @@ const Detail = () => {
       >
         <Table size="small" sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
-            <TableRow style={{ backgroundColor: '#aa33be' }}>
+            <TableRow style={{ backgroundColor: '#041A4D' }}>
               <TableCell align="left" style={{ width: '30%', color: '#fff' }}>
                 Properti
               </TableCell>
@@ -202,7 +202,7 @@ const Detail = () => {
                 aria-label="recipe"
                 style={{
                   backgroundColor: 'white',
-                  border: '1px solid #9500ae',
+                  border: '1px solid #041A4D',
                 }}
               >
                 <Info color="primary" />
@@ -217,7 +217,7 @@ const Detail = () => {
         <TableContainer component="div" style={{ border: '1px solid #E5E8EC', borderRadius: 5, overflow: 'auto' }}>
           <Table size="small" sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
-              <TableRow style={{ backgroundColor: '#aa33be' }}>
+              <TableRow style={{ backgroundColor: '#041A4D' }}>
                 <TableCell align="center" style={{ width: '10%', color: '#fff' }}>
                   Nomor
                 </TableCell>
@@ -245,7 +245,7 @@ const Detail = () => {
                     {Number(idx) + 1}
                   </TableCell>
                   <TableCell align="center" style={{ width: '45%' }}>
-                    {format(new Date(item.date), 'dd/MM/yyyy')}
+                    {format(new Date(item.date), 'dd MMMM yyyy')}
                   </TableCell>
                   <TableCell align="center" style={{ width: '45%' }}>
                     {item.description}

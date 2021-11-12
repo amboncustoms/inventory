@@ -117,7 +117,7 @@ const Dashboard = () => {
             >
               <CardHeader
                 avatar={
-                  <Avatar aria-label="recipe" style={{ backgroundColor: '#9500ae' }}>
+                  <Avatar aria-label="recipe" style={{ backgroundColor: '#041A4D' }}>
                     <BarChart style={{ color: 'white' }} />
                   </Avatar>
                 }
@@ -141,7 +141,7 @@ const Dashboard = () => {
               >
                 <CardHeader
                   avatar={
-                    <Avatar aria-label="recipe" style={{ backgroundColor: '#9500ae' }}>
+                    <Avatar aria-label="recipe" style={{ backgroundColor: '#041A4D' }}>
                       <TrackChanges style={{ color: 'white' }} />
                     </Avatar>
                   }
@@ -162,7 +162,7 @@ const Dashboard = () => {
               >
                 <CardHeader
                   avatar={
-                    <Avatar aria-label="recipe" style={{ backgroundColor: '#9500ae' }}>
+                    <Avatar aria-label="recipe" style={{ backgroundColor: '#041A4D' }}>
                       <Favorite style={{ color: 'white' }} />
                     </Avatar>
                   }

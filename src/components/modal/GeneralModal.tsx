@@ -113,11 +113,13 @@ const GeneralModal: FC<ModalProps> = ({
       })
       .finally(() => {
         setIncartsUpdate([]);
-        setCartNotifUpdate([]);
         deleteLocalStorage('incarts');
         handleModalClose();
         setOpenApprovalPopper(false);
         queryClient.invalidateQueries('notifs');
+        if (setCartNotifUpdate) {
+          setCartNotifUpdate([]);
+        }
       });
   };
   return (
@@ -139,7 +141,7 @@ const GeneralModal: FC<ModalProps> = ({
                 aria-label="recipe"
                 style={{
                   backgroundColor: 'white',
-                  border: `1px solid ${type === 'confirm' ? '#9500ae' : '#f50057'}`,
+                  border: `1px solid ${type === 'confirm' ? '#041A4D' : '#f50057'}`,
                 }}
               >
                 {type === 'auth' ? (

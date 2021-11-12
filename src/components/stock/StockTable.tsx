@@ -125,7 +125,7 @@ const StockTable = ({ filterFn }) => {
     >
       <CardHeader
         avatar={
-          <Avatar aria-label="recipe" style={{ backgroundColor: '#9500ae' }}>
+          <Avatar aria-label="recipe" style={{ backgroundColor: '#041A4D' }}>
             <ViewStream style={{ color: 'white' }} />
           </Avatar>
         }
@@ -142,7 +142,7 @@ const StockTable = ({ filterFn }) => {
       >
         <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
           <TableHead>
-            <TableRow style={{ backgroundColor: '#aa33be' }}>
+            <TableRow style={{ backgroundColor: '#041A4D' }}>
               <TableCell align="center" style={{ color: '#fff' }}>
                 Nomor
               </TableCell>

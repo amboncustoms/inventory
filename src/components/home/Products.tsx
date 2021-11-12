@@ -55,7 +55,7 @@ const Products = (props: PropTypes): JSX.Element => {
         <Grid container sx={{ justifyContent: 'flex-start', padding: { xs: '0 2.5rem' } }} spacing={4}>
           {isSuccess &&
             products?.map((product) => (
-              <Grid item key={product.id} xs={12} sm={6} md={4} lg={3}>
+              <Grid item key={product.id} xs={12} sm={6} md={4} lg={3} xl={2}>
                 <Product product={product} properties={getProperties(product.category)} />
               </Grid>
             ))}

@@ -140,9 +140,9 @@ const Products = ({ rules, isSuccess }) => {
       .catch((err) => {
         throw new Error(err);
       })
-      .finally(() => {
+      .finally(async () => {
         setCartToEmpty();
-        queryClient.invalidateQueries('notifs');
+        await queryClient.invalidateQueries('notifs');
       });
   };
 
