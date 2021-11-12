@@ -23,7 +23,7 @@ const Notification = ({ setOpenPopper }) => {
       if (notif?.type === 'STOCKIN') {
         return <StockinNotif key={notif.id} notif={notif} isSuccess={isSuccess} />;
       }
-      return <StockinNotif key={notif.id} notif={notif} isSuccess={isSuccess} />;
+      return <UserNotif key={notif.id} notif={notif} isSuccess={isSuccess} />;
     }
     return <UserNotif key={notif.id} notif={notif} isSuccess={isSuccess} />;
   }

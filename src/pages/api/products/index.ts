@@ -5,32 +5,6 @@ import { Product, productSchema } from '@src/utils/validation_schema';
 import prisma from 'db';
 
 export default handler()
-  .use(auth)
-  .use(validate(productSchema))
-  .post(async (req, res) => {
-    const { categoryId, code, description, name }: Product = req.body;
-    try {
-      const product = await prisma.product.findUnique({
-        where: {
-          code,
-        },
-      });
-      if (!product) {
-        const createdProduct = await prisma.product.create({
-          data: {
-            categoryId,
-            code,
-            description,
-            name,
-          },
-        });
-        return res.json(createdProduct);
-      }
-      return res.status(400).json({ message: 'Produk sudah ada' });
-    } catch (error) {
-      return res.status(500).json({ message: 'Something went wrong' });
-    }
-  })
   .get(async (_, res) => {
     try {
       const products = await prisma.product.findMany({
@@ -72,6 +46,32 @@ export default handler()
         };
       });
       return res.json(customProduct);
+    } catch (error) {
+      return res.status(500).json({ message: 'Something went wrong' });
+    }
+  })
+  .use(auth)
+  .use(validate(productSchema))
+  .post(async (req, res) => {
+    const { categoryId, code, description, name }: Product = req.body;
+    try {
+      const product = await prisma.product.findUnique({
+        where: {
+          code,
+        },
+      });
+      if (!product) {
+        const createdProduct = await prisma.product.create({
+          data: {
+            categoryId,
+            code,
+            description,
+            name,
+          },
+        });
+        return res.json(createdProduct);
+      }
+      return res.status(400).json({ message: 'Produk sudah ada' });
     } catch (error) {
       return res.status(500).json({ message: 'Something went wrong' });
     }

@@ -23,6 +23,7 @@ export const getCat = async (_, res) => {
 };
 
 export default handler()
+  .get((req, res) => getCat(req, res))
   .use(auth)
   .use(validate(categorySchema))
   .post(async (req, res) => {
@@ -45,5 +46,4 @@ export default handler()
     } catch (error) {
       return res.status(500).json({ message: 'Something went wrong' });
     }
-  })
-  .get((req, res) => getCat(req, res));
+  });
