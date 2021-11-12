@@ -23,21 +23,21 @@ interface MyAppProps extends AppProps {
 export default function MyApp(props: MyAppProps): any {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
   return (
-    <MainContext>
-      <QueryClientProvider client={queryClient}>
-        <CacheProvider value={emotionCache}>
-          <Head>
-            <title>My page</title>
-            <meta name="viewport" content="initial-scale=1, width=device-width" />
-          </Head>
+    <QueryClientProvider client={queryClient}>
+      <CacheProvider value={emotionCache}>
+        <Head>
+          <title>My page</title>
+          <meta name="viewport" content="initial-scale=1, width=device-width" />
+        </Head>
+        <MainContext>
           <ThemeProvider theme={theme}>
             <Layout>
               <CssBaseline />
               <Component {...pageProps} />
             </Layout>
           </ThemeProvider>
-        </CacheProvider>
-      </QueryClientProvider>
-    </MainContext>
+        </MainContext>
+      </CacheProvider>
+    </QueryClientProvider>
   );
 }

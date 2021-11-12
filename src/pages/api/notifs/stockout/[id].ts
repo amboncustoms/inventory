@@ -5,30 +5,29 @@ import prisma from 'db';
 export default handler()
   .use(auth)
   .delete(async (req, res) => {
-    const { userId } = req.user;
+    const { id } = req.query;
     try {
-      const notifs = await prisma.notif.findMany({
+      const notif = await prisma.notif.findFirst({
         where: {
-          userId,
+          id: id as string,
           status: 'READY',
           type: 'STOCKOUT',
         },
       });
 
-      notifs.forEach(async (n) => {
-        const deleteNotifcart = prisma.notifCart.deleteMany({
-          where: {
-            notifId: n.id,
-          },
-        });
-
-        const deleteNotif = prisma.notif.deleteMany({
-          where: {
-            id: n.id,
-          },
-        });
-        await prisma.$transaction([deleteNotifcart, deleteNotif]);
+      const deleteNotifcart = prisma.notifCart.deleteMany({
+        where: {
+          notifId: notif.id,
+        },
       });
+
+      const deleteNotif = prisma.notif.deleteMany({
+        where: {
+          id: id as string,
+        },
+      });
+      await prisma.$transaction([deleteNotifcart, deleteNotif]);
+
       return res.json({ message: 'Notif with status approved deleted' });
     } catch (error) {
       return res.status(500).json({ message: 'Something went wrong' });

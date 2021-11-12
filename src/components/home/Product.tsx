@@ -1,11 +1,9 @@
 import React, { FC, useContext } from 'react';
 import { AddShoppingCart, Block } from '@mui/icons-material';
 import { Card, CardActions, CardContent, IconButton, Tooltip, Typography, Box, Divider } from '@mui/material';
-import axios from 'axios';
-import { GetServerSideProps } from 'next';
 import Image from 'next/image';
-import { QueryClient, useQuery, dehydrate } from 'react-query';
 import { CartContext } from '@src/contexts/cart';
+import { RuleContext } from '@src/contexts/rule';
 import { Properties, Product as TProduct } from '@src/utils/types';
 
 interface PropType {
@@ -13,13 +11,8 @@ interface PropType {
   product: TProduct;
 }
 
-const getRules = async () => {
-  const { data } = await axios.get('/api/rules');
-  return data;
-};
-
 const Product: FC<PropType> = ({ properties, product }) => {
-  const { data: rules, isSuccess } = useQuery('rules', getRules);
+  const { rules, isSuccess } = useContext(RuleContext);
   const { image, color } = properties;
   const { name, latestQuantity, id, category } = product;
   const { setCartProduct } = useContext(CartContext);
@@ -131,30 +124,3 @@ const Product: FC<PropType> = ({ properties, product }) => {
 };
 
 export default Product;
-
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  try {
-    const { cookie } = req.headers;
-    if (!cookie) {
-      return {
-        redirect: {
-          destination: '/login',
-          permanent: false,
-        },
-      };
-    }
-    const getServerRules = async () => {
-      const { data } = await axios.get('/api/rules', { headers: { cookie } });
-      return data;
-    };
-    const queryClient = new QueryClient();
-    await queryClient.prefetchQuery('rules', getServerRules);
-    return {
-      props: {
-        dehydratedState: dehydrate(queryClient),
-      },
-    };
-  } catch (err) {
-    res.writeHead(307, { Location: '/login' }).end();
-  }
-};

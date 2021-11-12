@@ -21,10 +21,11 @@ import {
   Button,
 } from '@mui/material';
 import axios from 'axios';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import GeneralModal from '@src/components/modal/GeneralModal';
 import { useAuthState } from '@src/contexts/auth';
 import { CartContext } from '@src/contexts/cart';
+import { RuleContext } from '@src/contexts/rule';
 import { Notif } from '@src/utils/types';
 
 const RenderAlert = ({ status, user }) => {
@@ -41,11 +42,6 @@ const RenderAlert = ({ status, user }) => {
   );
 };
 
-const getRules = async () => {
-  const { data } = await axios.get('/api/rules');
-  return data;
-};
-
 type Rule = {
   activeStep?: number;
   allowAddToCart?: string;
@@ -54,8 +50,8 @@ type Rule = {
 
 const NotifDetail = ({ setOpenDetail, notif, incart }) => {
   const { user } = useAuthState();
-  const { note, status, user: notifUser }: Notif = notif;
-  const { data: rules } = useQuery('rules', getRules);
+  const { note, status, user: notifUser, type }: Notif = notif;
+  const { rules } = useContext(RuleContext);
   const [openModalConfirm, setOpenModalConfirm] = useState(false);
   const { skip } = useContext(CartContext);
   const [skipped, setSkipped] = skip;
@@ -73,7 +69,7 @@ const NotifDetail = ({ setOpenDetail, notif, incart }) => {
   );
   const updateNotifMutation = useMutation(
     (id) => {
-      return axios.patch(`/api/notifs/stockout/approval/${id}`, { status: 'READY' });
+      return axios.patch(`/api/notifs/stockout/approval/${id}`, { status: 'READY', description: 'Barang Sudah Siap' });
     },
     {
       onSuccess: () => {
@@ -181,14 +177,23 @@ const NotifDetail = ({ setOpenDetail, notif, incart }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {incart.products?.map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell component="th" scope="row">
-                    {item.productName}
-                  </TableCell>
-                  <TableCell align="right">{item.productIncart}</TableCell>
-                </TableRow>
-              ))}
+              {type === 'STOCKIN'
+                ? incart?.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell component="th" scope="row">
+                        {item.productName}
+                      </TableCell>
+                      <TableCell align="right">{item.productQuantity}</TableCell>
+                    </TableRow>
+                  ))
+                : incart.products?.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell component="th" scope="row">
+                        {item.productName}
+                      </TableCell>
+                      <TableCell align="right">{item.productIncart}</TableCell>
+                    </TableRow>
+                  ))}
             </TableBody>
           </Table>
         </TableContainer>
@@ -203,7 +208,7 @@ const NotifDetail = ({ setOpenDetail, notif, incart }) => {
         }}
       >
         <RenderAlert status={status} user={user} />
-        {user.role === 'RT' && status !== 'READY' && status !== 'REJECTED' && (
+        {user.role === 'RT' && status !== 'READY' && status !== 'REJECTED' && type === 'STOCKOUT' && (
           <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem', width: '100%' }}>
             <Button
               variant="outlined"

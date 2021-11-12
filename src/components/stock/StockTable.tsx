@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Cached, ViewStream, ListAltOutlined, FilterList } from '@mui/icons-material';
 import { LocalizationProvider, DatePicker } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
@@ -27,6 +27,7 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import Loading from '@src/components/Loading';
 import { useAuthState } from '@src/contexts/auth';
+import { RevalidateContext } from '@src/contexts/revalidation';
 
 const numberFormatterInRupiah = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' });
 const numberFormatter = new Intl.NumberFormat();
@@ -37,7 +38,9 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props,
   return <MUIAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-const StockTable = ({ filterFn, revalidateProduct, setRevalidateProduct, revalidateStock, setRevalidateStock }) => {
+const StockTable = ({ filterFn }) => {
+  const { revalidateProduct, setRevalidateProduct, revalidateStock, setRevalidateStock } =
+    useContext(RevalidateContext);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const router = useRouter();

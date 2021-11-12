@@ -14,8 +14,6 @@ const Stock = () => {
   const [openCategory, setOpenCategory] = useState(false);
   const [openProduct, setOpenProduct] = useState(false);
   const [openStock, setOpenStock] = useState(false);
-  const [revalidateProduct, setRevalidateProduct] = useState(false);
-  const [revalidateStock, setRevalidateStock] = useState(false);
   const [filterFn, setFilterFn] = useState({ fn: (items) => items });
 
   const handleSearch = (event) => {
@@ -100,17 +98,11 @@ const Stock = () => {
             <ActionButtons />
           </Grid>
         </Grid>
-        <StockTable
-          revalidateProduct={revalidateProduct}
-          setRevalidateProduct={setRevalidateProduct}
-          revalidateStock={revalidateStock}
-          setRevalidateStock={setRevalidateStock}
-          filterFn={filterFn}
-        />
+        <StockTable filterFn={filterFn} />
       </div>
       <CategoryDialog openCategory={openCategory} setOpenCategory={setOpenCategory} />
-      <ProductDialog openProduct={openProduct} setOpenProduct={setOpenProduct} setRevalidate={setRevalidateProduct} />
-      <StockDialog openStock={openStock} setOpenStock={setOpenStock} setRevalidate={setRevalidateStock} />
+      <ProductDialog openProduct={openProduct} setOpenProduct={setOpenProduct} />
+      <StockDialog openStock={openStock} setOpenStock={setOpenStock} />
     </>
   );
 };

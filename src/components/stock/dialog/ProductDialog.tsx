@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Summarize } from '@mui/icons-material';
 import {
   Alert as MUIAlert,
@@ -15,10 +15,12 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 import { Formik } from 'formik';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import * as Yup from 'yup';
 import Select from '@src/components/FormUI/Select';
 import TextField from '@src/components/FormUI/TextField';
+import { CategoryContext } from '@src/contexts/category';
+import { RevalidateContext } from '@src/contexts/revalidation';
 
 type ProductValue = {
   categoryId: string;
@@ -43,18 +45,13 @@ const FORM_VALIDATION = Yup.object().shape({
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return <MUIAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
-const getCategories = async () => {
-  const { data } = await axios.get('/api/categories');
-  return data;
-};
 
-export default function ProductDialog({ openProduct, setOpenProduct, setRevalidate }) {
+export default function ProductDialog({ openProduct, setOpenProduct }) {
+  const { setRevalidateProduct } = useContext(RevalidateContext);
   const queryClient = useQueryClient();
   const [errors, setErrors] = useState(null);
   const [openSnack, setOpenSnack] = useState(false);
-  const { data: categories, isSuccess: catSuccess } = useQuery('categories', getCategories, {
-    staleTime: 3000,
-  });
+  const { categories, isSuccess } = useContext(CategoryContext);
 
   const handleClose = () => {
     setOpenProduct(false);
@@ -73,7 +70,7 @@ export default function ProductDialog({ openProduct, setOpenProduct, setRevalida
         queryClient.invalidateQueries('products');
         setErrors(null);
         setOpenSnack(true);
-        setRevalidate(true);
+        setRevalidateProduct(true);
       },
       onError: (error: any) => {
         setErrors(error.response.data);
@@ -118,7 +115,7 @@ export default function ProductDialog({ openProduct, setOpenProduct, setRevalida
                   Input barang hanya dilakukan ketika barang belum pernah diinput sebelumya, jika sudah pernah diinput,
                   maka seharusnya cukup dengan tambah stok, dankee.
                 </DialogContentText>
-                <Select name="categoryId" fullWidth label="Kategori" options={catSuccess && categories} size="small" />
+                <Select name="categoryId" fullWidth label="Kategori" options={isSuccess && categories} size="small" />
                 <TextField margin="normal" required fullWidth id="code" label="Kode Barang" name="code" size="small" />
                 <TextField margin="normal" required fullWidth id="name" label="Nama Barang" name="name" size="small" />
                 <MUITextField

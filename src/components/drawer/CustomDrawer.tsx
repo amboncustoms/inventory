@@ -33,9 +33,9 @@ import axios from 'axios';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useQuery } from 'react-query';
 import { useAuthState } from '@src/contexts/auth';
 import { CartContext } from '@src/contexts/cart';
+import { NotifContext } from '@src/contexts/notif';
 import BottomNav from './bottomNavbar/BottomNav';
 import MenuPopper from './bottomNavbar/MenuPopper';
 import Notification from './notif';
@@ -50,19 +50,14 @@ interface Props {
   children: React.ReactNode;
 }
 
-const getNotifs = async () => {
-  const { data } = await axios.get('/api/notifs');
-  return data;
-};
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return <MUIAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
 const CustomDrawer: FC<Props> = (props) => {
   const { user } = useAuthState();
-  const { data: notifs, isSuccess } = useQuery('notifs', getNotifs, {
-    staleTime: 3000,
-  });
+  const { notifs, isSuccess } = useContext(NotifContext);
+
   const router = useRouter();
   const { window, children } = props;
   const container = window !== undefined ? () => window().document.body : undefined;

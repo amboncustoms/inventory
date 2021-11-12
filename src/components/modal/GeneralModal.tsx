@@ -21,6 +21,7 @@ interface ModalProps {
   text?: string;
   setIncartsUpdate?: any;
   setOpenApprovalPopper?: any;
+  setCartNotifUpdate?: any;
 }
 
 function deleteLocalStorage(key: string) {
@@ -44,6 +45,7 @@ const GeneralModal: FC<ModalProps> = ({
   text,
   setIncartsUpdate,
   setOpenApprovalPopper,
+  setCartNotifUpdate,
 }) => {
   const [noteValue, setNoteValue] = useState('');
   const queryClient = useQueryClient();
@@ -111,6 +113,7 @@ const GeneralModal: FC<ModalProps> = ({
       })
       .finally(() => {
         setIncartsUpdate([]);
+        setCartNotifUpdate([]);
         deleteLocalStorage('incarts');
         handleModalClose();
         setOpenApprovalPopper(false);

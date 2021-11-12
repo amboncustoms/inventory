@@ -52,6 +52,7 @@ export default handler()
         data: {
           userId,
           type: 'STOCKOUT',
+          description: 'Permohonan Permintaan Barang',
         },
       });
       products.forEach(async (p) => {

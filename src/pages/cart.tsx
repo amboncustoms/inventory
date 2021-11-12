@@ -1,32 +1,26 @@
 import React, { useContext, useEffect } from 'react';
 import { Stepper, Step, StepLabel, Divider } from '@mui/material';
 import { PrismaClient } from '@prisma/client';
-import axios from 'axios';
 import { verify } from 'jsonwebtoken';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useQuery } from 'react-query';
 import Confirm from '@src/components/cart/Confirm';
 import Products from '@src/components/cart/Products';
 import Waiting from '@src/components/cart/Waiting';
 import { useAuthState } from '@src/contexts/auth';
 import { CartContext } from '@src/contexts/cart';
+import { RuleContext } from '@src/contexts/rule';
 
 function getSteps() {
   return ['Mengajukan Permohonan', 'Menunggu Validasi RT', 'Konfirmasi Barang Diterima'];
 }
 
-const getRules = async () => {
-  const { data } = await axios.get('/api/rules');
-  return data;
-};
-
 const Cart = () => {
   const { skip } = useContext(CartContext);
+  const { rules, isSuccess, isError } = useContext(RuleContext);
   const [skipped] = skip;
   const steps = getSteps();
-  const { data: rules, isSuccess, isError } = useQuery('rules', getRules);
   const router = useRouter();
   const { authenticated } = useAuthState();
   const isStepSkipped = (step) => {

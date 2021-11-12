@@ -205,16 +205,17 @@ enum NotifType {
 }
 
 model Notif {
-  id         String      @id @default(cuid())
-  status     Status?     @default(NOTHING)
-  type       NotifType?
-  note       String?
-  user       User?       @relation(fields: [userId], references: [id])
-  userId     String?     @map("user_id")
-  proposal   Proposal?   @relation(fields: [proposalId], references: [id])
-  proposalId String?     @unique @map("proposal_id")
-  notifCarts NotifCart[]
-  adjustment Adjustment?
+  id          String      @id @default(cuid())
+  status      Status?     @default(NOTHING)
+  type        NotifType?
+  description String?
+  note        String?
+  user        User?       @relation(fields: [userId], references: [id])
+  userId      String?     @map("user_id")
+  proposal    Proposal?   @relation(fields: [proposalId], references: [id])
+  proposalId  String?     @unique @map("proposal_id")
+  notifCarts  NotifCart[]
+  adjustment  Adjustment?
 
 
   @@map("notifs")
@@ -226,6 +227,9 @@ model NotifCart {
   productCategory String   @map("product_category") @db.VarChar(255)
   productQuantity Int      @map("product_quantity")
   productCode     String   @map("product_code")
+  description     String?
+  price           Int?
+  productId       String?
   notif           Notif?   @relation(fields: [notifId], references: [id])
   notifId         String?  @map("notif_id")
   createdAt       DateTime @default(now()) @map("created_at")

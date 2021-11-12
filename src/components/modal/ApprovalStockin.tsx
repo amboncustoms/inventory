@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import {
   AddBox,
-  Block,
   FilterTiltShift,
   IndeterminateCheckBox,
   KeyboardArrowDown,
@@ -27,6 +26,7 @@ import axios from 'axios';
 import { useMutation, useQueryClient } from 'react-query';
 import Loading from '@src/components/Loading';
 import GeneralModal from '@src/components/modal/GeneralModal';
+import { RevalidateContext } from '@src/contexts/revalidation';
 
 function setLocalStorage(key, value) {
   try {
@@ -65,10 +65,10 @@ function deleteLocalStorage(key: string) {
 }
 
 function renderAdjusment(props) {
-  const { incartsUpdate, setIncartsUpdate, id, productQuantity, incart, setProductQuantity, quantity } = props;
+  const { cartNotifUpdate, latestQuantity, setCartNotifUpdate, id, productQuantity, setProductQuantity } = props;
   const increase = () => {
-    if (productQuantity > quantity) {
-      setProductQuantity(quantity);
+    if (productQuantity >= latestQuantity) {
+      setProductQuantity(productQuantity);
     } else {
       setProductQuantity((prev) => prev + 1);
     }
@@ -82,8 +82,8 @@ function renderAdjusment(props) {
   };
 
   useEffect(() => {
-    const updated = incartsUpdate?.map((c) => (c.id === id ? { ...c, productIncart: productQuantity } : c));
-    setIncartsUpdate(updated);
+    const updated = cartNotifUpdate?.map((c) => (c.id === id ? { ...c, productQuantity } : c));
+    setCartNotifUpdate(updated);
   }, [productQuantity]);
   return (
     <div
@@ -93,32 +93,24 @@ function renderAdjusment(props) {
         alignItems: 'center',
       }}
     >
-      <IconButton onClick={decrease}>
+      <IconButton onClick={decrease} disabled={productQuantity <= 0}>
         <IndeterminateCheckBox />
       </IconButton>
       <Typography variant="body2" style={{ margin: '0 .5rem' }}>
-        {incart}
+        {productQuantity}
       </Typography>
-      <IconButton onClick={increase} disabled={quantity - productQuantity === 0}>
-        {quantity - productQuantity === 0 ? <Block /> : <AddBox />}
+      <IconButton onClick={increase}>
+        <AddBox />
       </IconButton>
     </div>
   );
 }
 
 function Row(props) {
-  const { incartsUpdate, incart: baseIncart, idx, setIncartsUpdate } = props;
-  const {
-    id,
-    productId,
-    productName,
-    productCategory,
-    productIncart: incart,
-    productQuantity: quantity,
-    productCode,
-  } = baseIncart;
+  const { cartNotifUpdate, item, idx, setCartNotifUpdate } = props;
+  const { id, productId, productCode, productName, productCategory, productQuantity: productIncart } = item;
   const [open, setOpen] = useState(false);
-  const [productQuantity, setProductQuantity] = useState(incart);
+  const [productQuantity, setProductQuantity] = useState(productIncart);
   const [product, setProduct] = useState(null);
   const handleClick = async (myId) => {
     try {
@@ -131,13 +123,12 @@ function Row(props) {
   };
 
   const adjustmentProps = {
-    incartsUpdate,
-    setIncartsUpdate,
+    cartNotifUpdate,
+    setCartNotifUpdate,
     id,
-    incart,
-    productQuantity,
+    latestQuantity: product?.latestQuantity,
     setProductQuantity,
-    quantity,
+    productQuantity,
   };
 
   return (
@@ -194,34 +185,24 @@ function Row(props) {
 
 export default function CollapsibleTable({ userId, setOpen, notifId }) {
   const [loading, setLoading] = useState(true);
-  const [incartsUpdate, setIncartsUpdate] = useState(() => getLocalStorage('incarts', []));
+  const [cartNotifUpdate, setCartNotifUpdate] = useState(() => getLocalStorage('notif-cart', []));
   const queryClient = useQueryClient();
+  const { setRevalidateStock } = useContext(RevalidateContext);
 
-  const [openModalAuth, setOpenModalAuth] = useState(false);
   const [openModalConfirm, setOpenModalConfirm] = useState(false);
   const [openModalReject, setOpenModalReject] = useState(false);
 
-  const updateIncartsMutation = useMutation(
-    (data: any) => {
-      return axios.patch('/api/incarts', data);
-    },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries('incart');
-      },
-    }
-  );
-
   const updateNotifMutation = useMutation(
     (id) => {
-      return axios.patch(`/api/notifs/stockout/approval/${id}`, {
+      return axios.post(`/api/notifs/stockin/approval/${id}`, {
         status: 'APPROVED',
-        description: 'KSBU Telah Menyetujui',
+        description: 'KSBU Telah Menyetujui Penambahan Stok',
       });
     },
     {
       onSuccess: () => {
         queryClient.invalidateQueries('notifs');
+        setRevalidateStock(true);
       },
     }
   );
@@ -232,33 +213,32 @@ export default function CollapsibleTable({ userId, setOpen, notifId }) {
 
   const handleApprove = async () => {
     try {
-      updateIncartsMutation.mutate({ incarts: incartsUpdate });
       updateNotifMutation.mutate(notifId);
     } catch (err) {
       throw new Error(err);
     } finally {
-      setIncartsUpdate([]);
-      deleteLocalStorage('incarts');
+      setCartNotifUpdate([]);
+      deleteLocalStorage('notif-cart');
       setOpen(false);
     }
   };
 
   useEffect(() => {
-    if (!userId) {
+    if (!notifId) {
       setLoading(true);
       return;
     }
     const setIncart = async () => {
-      const { data: incarts } = await axios.get(`/api/incarts/${userId}`);
-      setIncartsUpdate((prev) => (prev.length !== 0 ? prev : incarts?.products));
+      const { data: notifCart } = await axios.get(`/api/notifs/${notifId}`);
+      setCartNotifUpdate((prev) => (prev.length !== 0 ? prev : notifCart));
       setLoading(false);
     };
     setIncart();
-  }, [userId]);
+  }, [notifId]);
 
   useEffect(() => {
-    setLocalStorage('incarts', incartsUpdate);
-  }, [incartsUpdate]);
+    setLocalStorage('notif-cart', cartNotifUpdate);
+  }, [cartNotifUpdate]);
 
   return loading ? (
     <Loading />
@@ -310,14 +290,14 @@ export default function CollapsibleTable({ userId, setOpen, notifId }) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {incartsUpdate?.length !== 0 &&
-                incartsUpdate?.map((item, index) => (
+              {cartNotifUpdate?.length !== 0 &&
+                cartNotifUpdate?.map((item, index) => (
                   <Row
                     key={item.id}
-                    incart={item}
+                    item={item}
                     idx={index}
-                    setIncartsUpdate={setIncartsUpdate}
-                    incartsUpdate={incartsUpdate}
+                    setCartNotifUpdate={setCartNotifUpdate}
+                    cartNotifUpdate={cartNotifUpdate}
                   />
                 ))}
             </TableBody>
@@ -332,12 +312,7 @@ export default function CollapsibleTable({ userId, setOpen, notifId }) {
           Aprrove
         </Button>
       </div>
-      <GeneralModal
-        open={openModalAuth}
-        setOpen={setOpenModalAuth}
-        text="Sesi Anda telah berakhir, mohon untuk login kembali."
-        type="auth"
-      />
+
       <GeneralModal
         handler={handleApprove}
         open={openModalConfirm}
@@ -351,7 +326,7 @@ export default function CollapsibleTable({ userId, setOpen, notifId }) {
         open={openModalReject}
         setOpen={setOpenModalReject}
         setOpenApprovalPopper={setOpen}
-        setIncartsUpdate={setIncartsUpdate}
+        setCartNotifUpdate={setCartNotifUpdate}
         type="reject"
       />
     </Paper>

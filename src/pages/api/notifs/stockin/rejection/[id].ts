@@ -28,12 +28,8 @@ export default handler()
     }
   })
   .delete(async (req, res) => {
-    const { role } = req.user;
     const { id } = req.query;
     try {
-      if (role !== 'KSBU') {
-        throw new Error('FORBIDDEN');
-      }
       const notif = await prisma.notif.findUnique({
         where: {
           id: id as string,

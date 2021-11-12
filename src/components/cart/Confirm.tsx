@@ -1,10 +1,13 @@
 import React, { useContext, useState } from 'react';
 import { Receipt } from '@mui/icons-material';
-import { Grid, Typography, Button } from '@mui/material';
+import { Grid, Typography, Button, Snackbar, Alert as MUIAlert, AlertProps } from '@mui/material';
 import axios from 'axios';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useAuthState } from '@src/contexts/auth';
 import { CartContext } from '@src/contexts/cart';
+import { NotifContext } from '@src/contexts/notif';
 import GeneralModal from '../modal/GeneralModal';
 
 const getIncart = async () => {
@@ -12,12 +15,20 @@ const getIncart = async () => {
   return data;
 };
 
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
+  return <MUIAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 const Confirm = ({ rules }) => {
   const { skip } = useContext(CartContext);
+  const { notifs, isSuccess } = useContext(NotifContext);
   const { data: incart } = useQuery('myincart', getIncart);
   const [skipped, setSkipped] = skip;
   const [openModalConfirm, setOpenModalConfirm] = useState(false);
   const queryClient = useQueryClient();
+  const [errors, setErrors] = useState(null);
+  const [openSnack, setOpenSnack] = useState(false);
+  const { authenticated } = useAuthState();
+  const router = useRouter();
   const setAllowMutation = useMutation(
     () => {
       return axios.patch('/api/rules', { allowAddToCart: 'ALLOW' });
@@ -51,8 +62,8 @@ const Confirm = ({ rules }) => {
   );
 
   const deleteNotifMutation = useMutation(
-    () => {
-      return axios.delete('/api/notifs/stockout');
+    (notifId) => {
+      return axios.delete(`/api/notifs/stockout/${notifId}`);
     },
     {
       onSuccess: () => {
@@ -81,13 +92,14 @@ const Confirm = ({ rules }) => {
   };
 
   const runMutation = () => {
+    const notifId = isSuccess && notifs.map((n) => n.id);
+    deleteNotifMutation.mutate(...notifId);
     sendOrderMutation.mutate({
       products: incart,
     });
     setAllowMutation.mutate();
     setActiveMutation.mutate();
     deleteIncartMutation.mutate();
-    deleteNotifMutation.mutate();
   };
 
   const handleNext = async () => {
@@ -99,58 +111,68 @@ const Confirm = ({ rules }) => {
     try {
       runMutation();
       setSkipped(newSkipped);
-    } catch (err) {
-      throw new Error(err);
+    } catch (error) {
+      if (authenticated) {
+        setErrors(error.response.data);
+      }
+      router.push('/login');
     }
   };
 
   return (
-    <Grid container style={{ backgroundColor: 'white', minHeight: '33rem', borderRadius: 10 }}>
-      <Grid item xs={12} md={6}>
-        <Image src="/images/cartTwo.png" width="600" height="600" alt="cart-two-image" />
-      </Grid>
-      <Grid item xs={12} md={6}>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            padding: '4rem 2rem',
-          }}
-        >
-          <Typography variant="h6" gutterBottom style={{ fontWeight: 'bold', textAlign: 'center' }}>
-            Permohonan telah disetujui Kasubbagian Umum,
-          </Typography>
-          <Typography variant="h6" style={{ textAlign: 'center' }}>
-            Jika barang telah diterima, dimohon untuk konfirmasi dengan klik tombol &quot;Diterima&quot;, kemudian
-            silakan untuk mengambil barangnya di RT, Danke.
-          </Typography>
-          <Button
-            startIcon={<Receipt />}
-            variant="contained"
-            color="primary"
-            style={{ marginTop: '3rem' }}
-            onClick={modalHandler}
+    <>
+      <Grid container style={{ backgroundColor: 'white', minHeight: '33rem', borderRadius: 10 }}>
+        <Grid item xs={12} md={6}>
+          <Image src="/images/cartTwo.png" width="600" height="600" alt="cart-two-image" />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              padding: '4rem 2rem',
+            }}
           >
-            Diterima
-          </Button>
-        </div>
+            <Typography variant="h6" gutterBottom style={{ fontWeight: 'bold', textAlign: 'center' }}>
+              Permohonan telah disetujui Kasubbagian Umum,
+            </Typography>
+            <Typography variant="h6" style={{ textAlign: 'center' }}>
+              Jika barang telah diterima, dimohon untuk konfirmasi dengan klik tombol &quot;Diterima&quot;, kemudian
+              silakan untuk mengambil barangnya di RT, Danke.
+            </Typography>
+            <Button
+              startIcon={<Receipt />}
+              variant="contained"
+              color="primary"
+              style={{ marginTop: '3rem' }}
+              onClick={modalHandler}
+            >
+              Diterima
+            </Button>
+          </div>
+        </Grid>
+
+        <GeneralModal
+          handler={handleNext}
+          open={openModalConfirm}
+          setOpen={setOpenModalConfirm}
+          text="Apakah Anda yakin barang sudah diterima ?."
+          type="confirm"
+        />
       </Grid>
-      {/*  <GeneralModal
-        open={openModalAuth}
-        setOpen={setOpenModalAuth}
-        text="Sesi Anda telah berakhir, mohon untuk login kembali."
-        type="auth"
-      />  */}
-      <GeneralModal
-        handler={handleNext}
-        open={openModalConfirm}
-        setOpen={setOpenModalConfirm}
-        text="Apakah Anda yakin barang sudah diterima ?."
-        type="confirm"
-      />
-    </Grid>
+      <Snackbar
+        open={openSnack}
+        autoHideDuration={6000}
+        onClose={() => setOpenSnack(false)}
+        anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
+      >
+        <Alert onClose={() => setOpenSnack(false)} severity="error" sx={{ width: '100%' }}>
+          {`Mohon maaf terjadi error : ${errors?.message}`}
+        </Alert>
+      </Snackbar>
+    </>
   );
 };
 

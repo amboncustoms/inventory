@@ -1,26 +1,15 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Close as CloseIcon, Info as InfoIcon } from '@mui/icons-material';
 import { CardActions, CardHeader, Button, Avatar } from '@mui/material';
-import axios from 'axios';
-import { useQuery } from 'react-query';
 import Loading from '@src/components/Loading';
 import { useAuthState } from '@src/contexts/auth';
+import { NotifContext } from '@src/contexts/notif';
 import AdminNotif from './AdminNotif';
+import StockinNotif from './StockinNotif';
 import UserNotif from './UserNotif';
 
-const getNotifs = async () => {
-  const { data } = await axios.get('/api/notifs');
-  return data;
-};
-
 const Notification = ({ setOpenPopper }) => {
-  const {
-    data: notifs,
-    isSuccess,
-    isLoading,
-  } = useQuery('notifs', getNotifs, {
-    staleTime: 3000,
-  });
+  const { notifs, isSuccess, isLoading } = useContext(NotifContext);
 
   const { user } = useAuthState();
   function renderNotif(notif) {
@@ -29,6 +18,12 @@ const Notification = ({ setOpenPopper }) => {
         return <UserNotif key={notif.id} notif={notif} isSuccess={isSuccess} />;
       }
       return <AdminNotif key={notif.id} notif={notif} />;
+    }
+    if (user?.role === 'RT') {
+      if (notif?.type === 'STOCKIN') {
+        return <StockinNotif key={notif.id} notif={notif} isSuccess={isSuccess} />;
+      }
+      return <StockinNotif key={notif.id} notif={notif} isSuccess={isSuccess} />;
     }
     return <UserNotif key={notif.id} notif={notif} isSuccess={isSuccess} />;
   }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Search as SearchIcon } from '@mui/icons-material';
 import {
   InputLabel,
@@ -11,46 +11,25 @@ import {
   InputBase,
   IconButton,
 } from '@mui/material';
-import axios from 'axios';
 import { verify } from 'jsonwebtoken';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import { useQuery } from 'react-query';
 import MobileAppbar from '@src/components/home/MobileAppbar';
 import Products from '@src/components/home/Products';
 import Loading from '@src/components/Loading';
 import { useAuthState } from '@src/contexts/auth';
+import { CategoryContext } from '@src/contexts/category';
+import { ProductContext } from '@src/contexts/product';
 import { PrismaClient } from '.prisma/client';
 
 // icons
 
-const getProducts = async () => {
-  const { data } = await axios.get('/api/products');
-  return data;
-};
-const getCategories = async () => {
-  const { data } = await axios.get('/api/categories');
-  return data;
-};
-
 const gallery = () => {
-  const {
-    data: products,
-    isLoading,
-    isSuccess,
-  } = useQuery('products', getProducts, {
-    staleTime: 3000,
-  });
+  const { products, isLoading, isSuccess } = useContext(ProductContext);
+  const { categories, isError, isSuccess: catSuccess } = useContext(CategoryContext);
+
   const router = useRouter();
   const { authenticated } = useAuthState();
-
-  const {
-    data: categories,
-    isSuccess: catSuccess,
-    isError,
-  } = useQuery('categories', getCategories, {
-    staleTime: 3000,
-  });
 
   useEffect(() => {
     if (isError) {

@@ -4,24 +4,18 @@ import prisma from 'db';
 
 export default handler()
   .use(auth)
-  .patch(async (req, res) => {
+  .get(async (req, res) => {
     const { id } = req.query;
-    const { role } = req.user;
-    const { status, description } = req.body;
     try {
-      if (role === 'USER') {
-        throw new Error('FORBIDDEN');
-      }
-      await prisma.notif.update({
+      const notif = await prisma.notif.findUnique({
         where: {
           id: id as string,
         },
-        data: {
-          status,
-          description,
+        include: {
+          notifCarts: true,
         },
       });
-      return res.json({ message: 'Notif updated' });
+      return res.json(notif.notifCarts);
     } catch (error) {
       return res.status(500).json({ message: 'Something went wrong' });
     }

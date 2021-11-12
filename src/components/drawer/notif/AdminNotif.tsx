@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { NotificationsActive } from '@mui/icons-material';
 import { Card, CardHeader, Avatar, CardActions, Button, Divider, Dialog, DialogContent } from '@mui/material';
 import ApprovalPopper from '@src/components/modal/ApprovalPopper';
+import ApprovalStockin from '@src/components/modal/ApprovalStockin';
 
 const AdminNotif = ({ notif }) => {
   const [open, setOpen] = useState(false);
@@ -24,7 +25,7 @@ const AdminNotif = ({ notif }) => {
     }
   }, [open]);
 
-  const { user, id: notifId } = notif;
+  const { user, id: notifId, description, type } = notif;
   return (
     <>
       <Card
@@ -40,7 +41,7 @@ const AdminNotif = ({ notif }) => {
               <NotificationsActive color="primary" />
             </Avatar>
           }
-          title="Permohonan Permintaan Barang"
+          title={description}
           subheader={user.fullname}
         />
         <CardActions style={{ justifyContent: 'flex-end', display: 'flex' }} onClick={handleClickOpen}>
@@ -60,7 +61,11 @@ const AdminNotif = ({ notif }) => {
         aria-describedby="scroll-dialog-description"
       >
         <DialogContent style={{ padding: 0 }}>
-          <ApprovalPopper userId={user.id} setOpen={setOpen} notifId={notifId} />
+          {type === 'STOCKIN' ? (
+            <ApprovalStockin userId={user.id} setOpen={setOpen} notifId={notifId} />
+          ) : (
+            <ApprovalPopper userId={user.id} setOpen={setOpen} notifId={notifId} />
+          )}
         </DialogContent>
       </Dialog>
     </>

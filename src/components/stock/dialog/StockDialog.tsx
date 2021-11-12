@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { PostAdd } from '@mui/icons-material';
 import {
   Alert as MUIAlert,
@@ -16,9 +16,10 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 import { Formik } from 'formik';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import * as Yup from 'yup';
 import CurrencyFieldText, { handleValueChange } from '@src/components/FormUI/CurrencyField';
+import { ProductContext } from '@src/contexts/product';
 
 type StockValue = {
   description: string;
@@ -43,19 +44,13 @@ const FORM_VALIDATION = Yup.object().shape({
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return <MUIAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
-const getCategories = async () => {
-  const { data } = await axios.get('/api/products');
-  return data;
-};
 
-export default function StockDialog({ openStock, setOpenStock, setRevalidate }) {
+export default function StockDialog({ openStock, setOpenStock }) {
   const queryClient = useQueryClient();
   const [errors, setErrors] = useState(null);
   const [openSnack, setOpenSnack] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const { data: products, isSuccess } = useQuery('products', getCategories, {
-    staleTime: 3000,
-  });
+  const { products, isSuccess } = useContext(ProductContext);
 
   const handleClose = () => {
     setOpenStock(false);
@@ -66,14 +61,13 @@ export default function StockDialog({ openStock, setOpenStock, setRevalidate }) 
   };
   const mutation = useMutation(
     (data: StockValue) => {
-      return axios.post('/api/stocks', data);
+      return axios.post('/api/notifs/stockin', data);
     },
     {
       onSuccess: () => {
         queryClient.invalidateQueries('stocks');
         setErrors(null);
         setOpenSnack(true);
-        setRevalidate(true);
       },
       onError: (error: any) => {
         setErrors(error.response.data);
@@ -193,7 +187,7 @@ export default function StockDialog({ openStock, setOpenStock, setRevalidate }) 
               <DialogActions>
                 <Button onClick={handleClose}>Cancel</Button>
                 <Button type="submit" disabled={isSubmitting}>
-                  Tambah
+                  Ajukan
                 </Button>
               </DialogActions>
             </form>
@@ -207,7 +201,7 @@ export default function StockDialog({ openStock, setOpenStock, setRevalidate }) 
         anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
       >
         <Alert onClose={handleCloseSnack} severity={errors ? 'error' : 'success'} sx={{ width: '100%' }}>
-          {errors ? errors?.message : 'Kategori berhasil dibuat !'}
+          {errors ? errors?.message : 'Usulan penambahan stok berhasil dikirim !'}
         </Alert>
       </Snackbar>
     </div>

@@ -12,35 +12,34 @@ import {
   DialogContent,
 } from '@mui/material';
 import axios from 'axios';
-import Link from 'next/link';
 import { useMutation, useQueryClient } from 'react-query';
 import Loading from '@src/components/Loading';
 import NotifDetail from './NotifDetail';
 
 const UserNotif = ({ notif, isSuccess }) => {
-  const { status, id: notifId, userId, user: notifUser, description } = notif;
+  const { status, id: notifId, user: notifUser, description } = notif;
   const [loading, setLoading] = useState(true);
   const [incart, setIncart] = useState([]);
 
   const [openDetail, setOpenDetail] = useState(false);
 
   useEffect(() => {
-    if (!userId) {
+    if (!notifId) {
       setLoading(true);
       return;
     }
     const setMyIncart = async () => {
-      const { data } = await axios.get(`/api/incarts/${userId}`);
+      const { data } = await axios.get(`/api/notifs/${notifId}`);
       setIncart(data);
       setLoading(false);
     };
     setMyIncart();
-  }, [userId]);
+  }, [notifId]);
 
   const queryClient = useQueryClient();
   const deleteNotifMutation = useMutation(
     (id) => {
-      return axios.delete(`/api/notifs/stockout/rejection/${id}`);
+      return axios.delete(`/api/notifs/stockin/rejection/${id}`);
     },
     {
       onSuccess: () => {
@@ -81,11 +80,9 @@ const UserNotif = ({ notif, isSuccess }) => {
           subheader={notifUser?.fullname}
         />
         <CardActions style={{ justifyContent: 'flex-end', display: 'flex' }}>
-          {status === 'REJECTED' && (
-            <IconButton onClick={deleteNotification}>
-              <DeleteIcon color="secondary" />
-            </IconButton>
-          )}
+          <IconButton onClick={deleteNotification}>
+            <DeleteIcon color="secondary" />
+          </IconButton>
           <Button
             size="small"
             color={status === 'READY' || status === 'APPROVED' ? 'primary' : 'secondary'}
@@ -93,13 +90,6 @@ const UserNotif = ({ notif, isSuccess }) => {
           >
             Detail
           </Button>
-          {status === 'READY' && (
-            <Link href="/cart" passHref>
-              <Button size="small" color="primary">
-                Go to cart
-              </Button>
-            </Link>
-          )}
         </CardActions>
       </Card>
       <Divider />
