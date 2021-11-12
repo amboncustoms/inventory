@@ -148,7 +148,7 @@ const Products = ({ rules, isSuccess }) => {
 
   return (
     <>
-      {cart.length !== 0 && isSuccess ? (
+      {cart?.length !== 0 && isSuccess ? (
         <>
           <Grid container style={{ justifyContent: 'flex-start' }} spacing={4}>
             {cart.map((c) => (

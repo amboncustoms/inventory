@@ -11,7 +11,7 @@ const BottomNav = ({ handleToggle, notifs }) => {
   const [changeColor, setChangeColor] = useState(false);
 
   useEffect(() => {
-    if (cart.length !== 0 || (notifs && notifs?.length !== 0)) {
+    if (cart?.length !== 0 || (notifs && notifs?.length !== 0)) {
       setChangeColor(true);
     }
   }, [cart, notifs]);

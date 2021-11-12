@@ -48,7 +48,7 @@ type PropTypes = {
 const Products = (props: PropTypes): JSX.Element => {
   const { isLoading, isSuccess, products } = props;
   return (
-    <main style={{ padding: products.length === 0 ? '8%' : 0 }}>
+    <main style={{ padding: products?.length === 0 ? '8%' : 0 }}>
       {isLoading ? (
         <Loading />
       ) : (

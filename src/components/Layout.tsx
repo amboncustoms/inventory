@@ -1,6 +1,8 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import CustomDrawer from '@src/components/drawer/CustomDrawer';
+import { NotifProvider } from '@src/contexts/notif';
+import { RuleProvider } from '@src/contexts/rule';
 import Footer from './Footer';
 
 type Props = {
@@ -17,10 +19,14 @@ const Layout = ({ children }: Props): JSX.Element => {
       <Footer />
     </div>
   ) : (
-    <CustomDrawer>
-      <main>{children}</main>
-      <Footer />
-    </CustomDrawer>
+    <RuleProvider>
+      <NotifProvider>
+        <CustomDrawer>
+          <main>{children}</main>
+          <Footer />
+        </CustomDrawer>
+      </NotifProvider>
+    </RuleProvider>
   );
 };
 

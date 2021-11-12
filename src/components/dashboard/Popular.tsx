@@ -35,7 +35,7 @@ const Popular = ({ stocks }) => {
     <>
       {loading ? (
         <Loading />
-      ) : popularData.length !== 0 ? (
+      ) : popularData?.length !== 0 ? (
         <Grid container spacing={1} style={{ padding: '0.5rem 1rem' }}>
           {popularData.map((popular) => (
             <Grid item xs={12} key={popular.id}>

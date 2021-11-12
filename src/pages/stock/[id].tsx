@@ -72,7 +72,7 @@ const Detail = () => {
     setStartDate(null);
     setEndDate(null);
   };
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - stock?.data?.mutations.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - stock?.data?.mutations?.length) : 0;
 
   useEffect(() => {
     if (!id) {
@@ -187,7 +187,7 @@ const Detail = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      {stock?.data?.mutations.length === 0 ? (
+      {stock?.data?.mutations?.length === 0 ? (
         <div
           style={{
             height: '5rem',
@@ -211,7 +211,7 @@ const Detail = () => {
             title="Tidak ada riwayat stok"
           />
         </div>
-      ) : loading || stock.length === 0 ? (
+      ) : loading || stock?.length === 0 ? (
         <Loading />
       ) : (
         <TableContainer component="div" style={{ border: '1px solid #E5E8EC', borderRadius: 5, overflow: 'auto' }}>
@@ -290,7 +290,7 @@ const Detail = () => {
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
         labelRowsPerPage={null}
-        count={stock?.data?.mutations.length}
+        count={stock?.data?.mutations?.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

@@ -34,7 +34,7 @@ const Notification = ({ setOpenPopper }) => {
         <Loading />
       ) : (
         <div>
-          {notifs.length !== 0 ? (
+          {notifs?.length !== 0 ? (
             <div>{notifs?.map((notif) => renderNotif(notif))}</div>
           ) : (
             <div

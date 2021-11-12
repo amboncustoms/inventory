@@ -230,7 +230,7 @@ export default function CollapsibleTable({ userId, setOpen, notifId }) {
     }
     const setIncart = async () => {
       const { data: notifCart } = await axios.get(`/api/notifs/${notifId}`);
-      setCartNotifUpdate((prev) => (prev.length !== 0 ? prev : notifCart));
+      setCartNotifUpdate((prev) => (prev?.length !== 0 ? prev : notifCart));
       setLoading(false);
     };
     setIncart();

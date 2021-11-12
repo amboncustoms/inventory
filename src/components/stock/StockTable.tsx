@@ -79,7 +79,7 @@ const StockTable = ({ filterFn }) => {
     setEndDate(null);
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - product?.products.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - product?.products?.length) : 0;
 
   async function getStock() {
     try {
@@ -219,7 +219,7 @@ const StockTable = ({ filterFn }) => {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={product?.products.length}
+        count={product?.products?.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

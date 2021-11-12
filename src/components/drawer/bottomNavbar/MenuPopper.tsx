@@ -35,7 +35,7 @@ const MenuPopper = ({
             <MenuList autoFocusItem={openBottomPopper} id="menu-list-grow" onKeyDown={handleListKeyDown}>
               <MenuItem onClick={popperHandler}>
                 <IconButton aria-label="show 11 new notifications" color="inherit">
-                  <Badge badgeContent={notifs && notifs.length} color="secondary">
+                  <Badge badgeContent={notifs && notifs?.length} color="secondary">
                     <Notifications color="primary" />
                   </Badge>
                 </IconButton>
@@ -43,10 +43,10 @@ const MenuPopper = ({
               <Link href="/cart" passHref>
                 <MenuItem component="a">
                   <IconButton aria-label="show 4 new mails" color="inherit">
-                    {cart.length <= 0 ? (
+                    {cart?.length <= 0 ? (
                       <Inbox color="primary" />
                     ) : (
-                      <Badge badgeContent={cart.length} color="secondary">
+                      <Badge badgeContent={cart?.length} color="secondary">
                         <Inbox color="primary" />
                       </Badge>
                     )}
