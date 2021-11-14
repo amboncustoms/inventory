@@ -66,7 +66,7 @@ export default function CategoryDialog({ openCategory, setOpenCategory }) {
         <CardHeader
           style={{ paddingBottom: 0 }}
           avatar={
-            <Avatar aria-label="recipe" style={{ backgroundColor: '#9500ae' }}>
+            <Avatar aria-label="recipe" style={{ backgroundColor: '#041A4D' }}>
               <Category style={{ color: 'white' }} />
             </Avatar>
           }

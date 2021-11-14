@@ -152,7 +152,7 @@ const Products = ({ rules, isSuccess }) => {
         <>
           <Grid container style={{ justifyContent: 'flex-start' }} spacing={4}>
             {cart.map((c) => (
-              <Grid item key={c.productId} xs={12} sm={6} md={4} lg={3}>
+              <Grid item key={c.productId} xs={12} sm={6} md={4} lg={3} xl={2}>
                 <Product
                   productId={c.productId}
                   name={c.name}

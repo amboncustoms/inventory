@@ -109,7 +109,7 @@ const NotifDetail = ({ setOpenDetail, notif, incart }) => {
         <CardHeader
           style={{ padding: 0 }}
           avatar={
-            <Avatar aria-label="recipe" style={{ backgroundColor: 'white', border: '1px solid #9500ae' }}>
+            <Avatar aria-label="recipe" style={{ backgroundColor: 'white', border: '1px solid #041A4D' }}>
               <Person color="primary" />
             </Avatar>
           }
@@ -138,7 +138,7 @@ const NotifDetail = ({ setOpenDetail, notif, incart }) => {
             <CardHeader
               style={{ padding: 0 }}
               avatar={
-                <Avatar aria-label="recipe" style={{ backgroundColor: 'white', border: '1px solid #9500ae' }}>
+                <Avatar aria-label="recipe" style={{ backgroundColor: 'white', border: '1px solid #041A4D' }}>
                   <SpeakerNotes color="primary" />
                 </Avatar>
               }
@@ -161,7 +161,7 @@ const NotifDetail = ({ setOpenDetail, notif, incart }) => {
         <CardHeader
           style={{ padding: 0 }}
           avatar={
-            <Avatar aria-label="recipe" style={{ backgroundColor: 'white', border: '1px solid #9500ae' }}>
+            <Avatar aria-label="recipe" style={{ backgroundColor: 'white', border: '1px solid #041A4D' }}>
               <ViewList color="primary" />
             </Avatar>
           }

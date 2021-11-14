@@ -66,7 +66,7 @@ const UserNotif = ({ notif, isSuccess }) => {
             <Avatar
               style={{
                 backgroundColor: 'white',
-                border: `1px solid ${status === 'READY' || status === 'APPROVED' ? '#9500ae' : '#f50057'}`,
+                border: `1px solid ${status === 'READY' || status === 'APPROVED' ? '#041A4D' : '#f50057'}`,
               }}
             >
               {status === 'READY' || status === 'APPROVED' ? (

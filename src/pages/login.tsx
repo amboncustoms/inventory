@@ -41,13 +41,14 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props,
 export default function Login() {
   const [errors, setErrors] = useState(null);
   const [openSnack, setOpenSnack] = useState(false);
+  const [loginSuccess, setLoginSuccess] = useState(false);
   const router = useRouter();
   const dispatch = useAuthDispatch();
   const { authenticated } = useAuthState();
 
   useEffect(() => {
-    if (authenticated) router.push('/');
-  }, [authenticated]);
+    if (authenticated || loginSuccess) router.push('/');
+  }, [authenticated, loginSuccess]);
 
   const handleClose = (_event?: React.SyntheticEvent, reason?: string) => {
     if (reason === 'clickaway') {
@@ -63,6 +64,7 @@ export default function Login() {
     {
       onSuccess: (data) => {
         dispatch('LOGIN', data.data);
+        setLoginSuccess(true);
       },
       onError: (error: any) => {
         setErrors(error.response.data);

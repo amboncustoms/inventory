@@ -140,7 +140,7 @@ const StockTable = ({ filterFn }) => {
         component="div"
         style={{ marginBottom: '1rem', border: '1px solid #E5E8EC', borderRadius: 5, overflow: 'auto' }}
       >
-        <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+        <Table sx={{ minWidth: 650 }} aria-label="a dense table" size="small">
           <TableHead>
             <TableRow style={{ backgroundColor: '#041A4D' }}>
               <TableCell align="center" style={{ color: '#fff' }}>
@@ -177,7 +177,7 @@ const StockTable = ({ filterFn }) => {
                 .map((p, idx) => (
                   <TableRow key={p.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                     <TableCell component="th" scope="row" align="center">
-                      {Number(idx) + 1}
+                      {rowsPerPage * page + idx + 1}
                     </TableCell>
                     <TableCell align="center" style={{ textTransform: 'capitalize' }}>
                       {p.category}
@@ -210,7 +210,7 @@ const StockTable = ({ filterFn }) => {
       </TableContainer>
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
         <div style={{ display: 'flex', padding: '0.5rem 1rem', border: '1px solid #E5E8EC', borderRadius: 5 }}>
-          <Typography variant="body1">Total Nilai Persediaan :</Typography>
+          <Typography variant="body1">Total Nilai :</Typography>
           <Typography variant="body1" style={{ marginLeft: '2rem', fontWeight: 'bold' }}>
             {numberFormatterInRupiah.format(product.totalValue)}
           </Typography>
@@ -218,6 +218,7 @@ const StockTable = ({ filterFn }) => {
       </div>
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
+        labelRowsPerPage=""
         component="div"
         count={product?.products?.length}
         rowsPerPage={rowsPerPage}

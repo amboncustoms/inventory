@@ -97,7 +97,7 @@ export default function ProductDialog({ openProduct, setOpenProduct }) {
         <CardHeader
           style={{ paddingBottom: 0 }}
           avatar={
-            <Avatar aria-label="recipe" style={{ backgroundColor: '#9500ae' }}>
+            <Avatar aria-label="recipe" style={{ backgroundColor: '#041A4D' }}>
               <Summarize style={{ color: 'white' }} />
             </Avatar>
           }

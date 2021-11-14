@@ -21,18 +21,57 @@ import {
   Snackbar,
   AlertProps,
   Popper,
+  Card,
+  CardContent,
+  Box,
 } from '@mui/material';
 import { PrismaClient } from '@prisma/client';
 import axios from 'axios';
 import { add, format } from 'date-fns';
 import { verify } from 'jsonwebtoken';
 import { GetServerSideProps } from 'next';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import Loading from '@src/components/Loading';
 import { useAuthState } from '@src/contexts/auth';
+import { Properties } from '@src/utils/types';
 
 const numberFormatterInRupiah = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' });
 const numberFormatter = new Intl.NumberFormat();
+
+const getProperties = (category) => {
+  const properties: Properties = {
+    image: '',
+    color: '',
+  };
+  switch (category) {
+    case 'alat tulis kantor':
+      properties.image = '/images/atk.png';
+      properties.color = '#00666690';
+      break;
+    case 'alat kebersihan':
+      properties.image = '/images/alat-kebersihan.png';
+      properties.color = '#4d4dff90';
+      break;
+    case 'alat kendaraan':
+      properties.image = '/images/alat-kendaraan.png';
+      properties.color = '#ff333390';
+      break;
+    case 'alat komputer':
+      properties.image = '/images/alat-komputer.png';
+      properties.color = '#ffa50090';
+      break;
+    case 'obat obatan':
+      properties.image = '/images/box.png';
+      properties.color = '#00800090';
+      break;
+    default:
+      properties.image = '/images/others.png';
+      properties.color = '#883dbd90';
+      break;
+  }
+  return properties;
+};
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return <MUIAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -43,12 +82,14 @@ const Detail = () => {
   const [stock, setStock] = useState(null);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [startDate, setStartDate] = React.useState(null);
   const [endDate, setEndDate] = React.useState(null);
   const [errors, setErrors] = useState(null);
   const [openSnack, setOpenSnack] = useState(false);
   const { authenticated } = useAuthState();
+  const [imageUrl, setImageUrl] = useState('');
+  const [imageColor, setImageColor] = useState('');
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -106,6 +147,11 @@ const Detail = () => {
     getStock();
   }, [id, startDate, endDate, authenticated]);
 
+  useEffect(() => {
+    setImageUrl(getProperties(stock?.data?.category).image);
+    setImageColor(getProperties(stock?.data?.category).color);
+  }, [stock]);
+
   return (
     <Paper
       style={{
@@ -128,65 +174,142 @@ const Detail = () => {
           </IconButton>
         }
       />
-      <TableContainer
-        component="div"
-        style={{ margin: '1rem 0', border: '1px solid #E5E8EC', borderRadius: 5, overflow: 'auto' }}
-      >
-        <Table size="small" sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead>
-            <TableRow style={{ backgroundColor: '#041A4D' }}>
-              <TableCell align="left" style={{ width: '30%', color: '#fff' }}>
-                Properti
-              </TableCell>
-              <TableCell align="left" style={{ width: '70%', color: '#fff' }}>
-                Detail
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-              <TableCell component="th" scope="row" align="left" style={{ width: '30%' }}>
-                Kode Barang
-              </TableCell>
-              <TableCell align="left" style={{ width: '70%' }}>
-                {stock?.data?.code}
-              </TableCell>
-            </TableRow>
-            <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-              <TableCell component="th" scope="row" align="left" style={{ width: '30%' }}>
-                Kategori
-              </TableCell>
-              <TableCell align="left" style={{ width: '70%', textTransform: 'capitalize' }}>
-                {stock?.data?.category}
-              </TableCell>
-            </TableRow>
-            <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-              <TableCell component="th" scope="row" align="left" style={{ width: '30%' }}>
-                Nama Barang
-              </TableCell>
-              <TableCell align="left" style={{ width: '70%', textTransform: 'capitalize' }}>
-                {stock?.data?.name}
-              </TableCell>
-            </TableRow>
-            <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-              <TableCell component="th" scope="row" align="left" style={{ width: '30%' }}>
-                Deskripsi
-              </TableCell>
-              <TableCell align="left" style={{ width: '70%' }}>
-                {stock?.data?.description ? stock?.data?.description : '-'}
-              </TableCell>
-            </TableRow>
-            <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-              <TableCell component="th" scope="row" align="left" style={{ width: '30%' }}>
-                Saldo Awal
-              </TableCell>
-              <TableCell align="left" style={{ width: '70%', fontWeight: 'bold' }}>
-                {numberFormatter.format(stock?.mainStock)}
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <Grid container style={{ margin: '1rem 0 2rem 0' }}>
+        {loading || stock?.length === 0 ? (
+          <Grid item xs={12} md={5} lg={4} xl={3} style={{ height: '100%' }} />
+        ) : (
+          <Grid item xs={12} md={5} lg={4} xl={3} sx={{ marginBottom: { xs: '2rem', md: 0 } }}>
+            <Box sx={{ paddingRight: { md: '2rem', height: '100%' } }}>
+              <Card
+                sx={{
+                  height: '100%',
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  position: 'relative',
+                  bgcolor: imageColor !== '' && imageColor,
+                }}
+              >
+                <svg
+                  viewBox="0 0 375 283"
+                  fill="none"
+                  style={{
+                    transform: 'scale(1.5)',
+                    opacity: '0.1',
+                    position: 'absolute',
+                    bottom: '0',
+                    left: '0',
+                    marginBottom: '2rem',
+                  }}
+                >
+                  <rect
+                    x="159.52"
+                    y="175"
+                    width="152"
+                    height="152"
+                    rx="8"
+                    transform="rotate(-45 159.52 175)"
+                    fill="white"
+                  />
+                  <rect y="107.48" width="152" height="152" rx="8" transform="rotate(-45 0 107.48)" fill="white" />
+                </svg>
+                <CardContent>
+                  <div
+                    style={{
+                      position: 'relative',
+                      padding: '2rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      minHeight: '12rem',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'block',
+                        position: 'absolute',
+                        width: '10rem',
+                        height: '10rem',
+                        bottom: '0',
+                        left: '0',
+                        right: '0',
+                        marginBottom: '-1rem',
+                        marginLeft: '2.3rem',
+                        background: 'radial-gradient(black, transparent 60%)',
+                        transform: 'rotate3d(0,0,1, 20dg) scale3d(1, 0.6, 1)',
+                        opacity: '0.2',
+                      }}
+                    />
+                    <Image width={500} height={500} src={imageUrl !== '' && imageUrl} alt="" />
+                  </div>
+                </CardContent>
+              </Card>
+            </Box>
+          </Grid>
+        )}
+        <Grid item xs={12} md={7} lg={8} xl={9}>
+          <TableContainer
+            component="div"
+            style={{ border: '1px solid #E5E8EC', borderRadius: 5, overflow: 'auto', height: '100%' }}
+          >
+            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+              <TableHead>
+                <TableRow style={{ backgroundColor: '#041A4D' }}>
+                  <TableCell align="left" style={{ width: '30%', color: '#fff' }}>
+                    Properti
+                  </TableCell>
+                  <TableCell align="left" style={{ width: '70%', color: '#fff' }}>
+                    Detail
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                  <TableCell component="th" scope="row" align="left" style={{ width: '30%' }}>
+                    Kode Barang
+                  </TableCell>
+                  <TableCell align="left" style={{ width: '70%' }}>
+                    {stock?.data?.code}
+                  </TableCell>
+                </TableRow>
+                <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                  <TableCell component="th" scope="row" align="left" style={{ width: '30%' }}>
+                    Kategori
+                  </TableCell>
+                  <TableCell align="left" style={{ width: '70%', textTransform: 'capitalize' }}>
+                    {stock?.data?.category}
+                  </TableCell>
+                </TableRow>
+                <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                  <TableCell component="th" scope="row" align="left" style={{ width: '30%' }}>
+                    Nama Barang
+                  </TableCell>
+                  <TableCell align="left" style={{ width: '70%', textTransform: 'capitalize' }}>
+                    {stock?.data?.name}
+                  </TableCell>
+                </TableRow>
+                <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                  <TableCell component="th" scope="row" align="left" style={{ width: '30%' }}>
+                    Deskripsi
+                  </TableCell>
+                  <TableCell align="left" style={{ width: '70%' }}>
+                    {stock?.data?.description ? stock?.data?.description : '-'}
+                  </TableCell>
+                </TableRow>
+                <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                  <TableCell component="th" scope="row" align="left" style={{ width: '30%' }}>
+                    Saldo Awal
+                  </TableCell>
+                  <TableCell align="left" style={{ width: '70%', fontWeight: 'bold' }}>
+                    {numberFormatter.format(stock?.mainStock)}
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Grid>
+      </Grid>
       {stock?.data?.mutations?.length === 0 ? (
         <div
           style={{
@@ -215,7 +338,7 @@ const Detail = () => {
         <Loading />
       ) : (
         <TableContainer component="div" style={{ border: '1px solid #E5E8EC', borderRadius: 5, overflow: 'auto' }}>
-          <Table size="small" sx={{ minWidth: 650 }} aria-label="simple table">
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow style={{ backgroundColor: '#041A4D' }}>
                 <TableCell align="center" style={{ width: '10%', color: '#fff' }}>
@@ -242,13 +365,13 @@ const Detail = () => {
               {stock?.data?.mutations.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item, idx) => (
                 <TableRow key={item.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                   <TableCell component="th" scope="row" style={{ width: '10%' }} align="center">
-                    {Number(idx) + 1}
+                    {rowsPerPage * page + idx + 1}
                   </TableCell>
                   <TableCell align="center" style={{ width: '45%' }}>
                     {format(new Date(item.date), 'dd MMMM yyyy')}
                   </TableCell>
                   <TableCell align="center" style={{ width: '45%' }}>
-                    {item.description}
+                    {item.description ? item.description : '-'}
                   </TableCell>
                   <TableCell align="center" style={{ width: '45%' }}>
                     {numberFormatterInRupiah.format(item.price)}
@@ -289,7 +412,7 @@ const Detail = () => {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        labelRowsPerPage={null}
+        labelRowsPerPage=""
         count={stock?.data?.mutations?.length}
         rowsPerPage={rowsPerPage}
         page={page}

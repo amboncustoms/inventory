@@ -37,7 +37,7 @@ const AdminNotif = ({ notif }) => {
       >
         <CardHeader
           avatar={
-            <Avatar aria-label="recipe" style={{ backgroundColor: 'white', border: '1px solid #9500ae' }}>
+            <Avatar aria-label="recipe" style={{ backgroundColor: 'white', border: '1px solid #041A4D' }}>
               <NotificationsActive color="primary" />
             </Avatar>
           }

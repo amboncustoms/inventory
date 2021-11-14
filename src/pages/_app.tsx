@@ -26,7 +26,7 @@ export default function MyApp(props: MyAppProps): any {
     <QueryClientProvider client={queryClient}>
       <CacheProvider value={emotionCache}>
         <Head>
-          <title>My page</title>
+          <title>Apps | Inventory</title>
           <meta name="viewport" content="initial-scale=1, width=device-width" />
         </Head>
         <MainContext>

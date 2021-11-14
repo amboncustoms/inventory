@@ -51,7 +51,7 @@ const Notification = ({ setOpenPopper }) => {
                     aria-label="recipe"
                     style={{
                       backgroundColor: 'white',
-                      border: '1px solid #9500ae',
+                      border: '1px solid #041A4D',
                     }}
                   >
                     <InfoIcon color="primary" />
