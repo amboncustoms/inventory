@@ -44,6 +44,7 @@ export default function Login() {
   const [loginSuccess, setLoginSuccess] = useState(false);
   const router = useRouter();
   const dispatch = useAuthDispatch();
+
   const { authenticated } = useAuthState();
 
   useEffect(() => {
