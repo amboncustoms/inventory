@@ -36,6 +36,7 @@ import { useRouter } from 'next/router';
 import { useAuthState } from '@src/contexts/auth';
 import { CartContext } from '@src/contexts/cart';
 import { NotifContext } from '@src/contexts/notif';
+import { RevalidateContext } from '@src/contexts/revalidation';
 import GeneralModal from '../modal/GeneralModal';
 import BottomNav from './bottomNavbar/BottomNav';
 import MenuPopper from './bottomNavbar/MenuPopper';
@@ -63,6 +64,7 @@ const CustomDrawer: FC<Props> = (props) => {
   const { window, children } = props;
   const container = window !== undefined ? () => window().document.body : undefined;
   const { incartTotal } = useContext(CartContext);
+  const { setLoginSuccess } = useContext(RevalidateContext);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [openPopper, setOpenPopper] = useState(false);
@@ -88,6 +90,7 @@ const CustomDrawer: FC<Props> = (props) => {
     axios
       .get('/api/auth/logout')
       .then(() => {
+        setLoginSuccess(false);
         router.push('/login');
       })
       .catch((error) => {

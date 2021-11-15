@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   Container,
   Grid,
@@ -7,18 +6,19 @@ import {
   Typography,
   Button,
   Box,
-  Avatar,
   Snackbar,
   Alert as MUIAlert,
   AlertProps,
 } from '@mui/material';
 import axios from 'axios';
 import { Formik } from 'formik';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useMutation } from 'react-query';
 import * as Yup from 'yup';
 import TextField from '@src/components/FormUI/TextField';
 import { useAuthDispatch, useAuthState } from '@src/contexts/auth';
+import { RevalidateContext } from '@src/contexts/revalidation';
 
 type LoginValue = {
   username: string;
@@ -41,7 +41,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props,
 export default function Login() {
   const [errors, setErrors] = useState(null);
   const [openSnack, setOpenSnack] = useState(false);
-  const [loginSuccess, setLoginSuccess] = useState(false);
+  const { loginSuccess, setLoginSuccess } = useContext(RevalidateContext);
   const router = useRouter();
   const dispatch = useAuthDispatch();
 
@@ -97,11 +97,9 @@ export default function Login() {
           paddingLeft: '10%',
         }}
       >
-        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-          <LockOutlinedIcon />
-        </Avatar>
+        <Image width={80} height={80} src="/box.png" alt="main logo" />
         <Typography component="h1" variant="h5">
-          Sign in
+          Sign In
         </Typography>
         <Formik
           initialValues={{ ...INITIAL_FORM_STATE }}

@@ -18,26 +18,12 @@ export const categories = [
           description: 'alat kebersihan bagus',
           name: 'kain pel',
           latestQuantity: 0,
-          stocks: {
-            create: {
-              description: 'kain pel bagus',
-              price: 12345,
-              quantity: 50,
-            },
-          },
         },
         {
           code: '0384048',
           description: 'alat kebersihan bagus',
           name: 'sabun lantai',
           latestQuantity: 0,
-          stocks: {
-            create: {
-              description: 'kanebo kering bagus',
-              price: 123,
-              quantity: 50,
-            },
-          },
         },
       ],
     },
@@ -51,39 +37,18 @@ export const categories = [
           description: 'alat komputer bagus',
           name: 'SSD 256 GB',
           latestQuantity: 0,
-          stocks: {
-            create: {
-              description: 'SSD bagus',
-              price: 13264,
-              quantity: 50,
-            },
-          },
         },
         {
           code: '71F8F59',
           description: 'alat komputer bagus',
           name: 'Hardisk 500 GB',
           latestQuantity: 0,
-          stocks: {
-            create: {
-              description: 'Hardisk bagus',
-              price: 13265,
-              quantity: 50,
-            },
-          },
         },
         {
           code: '756479R',
           description: 'alat komputer bagus',
           name: 'Hardisk 500 GB',
           latestQuantity: 0,
-          stocks: {
-            create: {
-              description: 'Hardisk bagus',
-              price: 13265,
-              quantity: 50,
-            },
-          },
         },
       ],
     },
@@ -97,39 +62,18 @@ export const categories = [
           description: 'alat kendaraan bagus',
           name: 'Pewangi kendaraan',
           latestQuantity: 0,
-          stocks: {
-            create: {
-              description: 'Stella Mobil Kaca bagus',
-              price: 13262,
-              quantity: 50,
-            },
-          },
         },
         {
           code: '1F840CB',
           description: 'alat kendaraan bagus',
           name: 'Ban tubles',
-          latestQuantity: 50,
-          stocks: {
-            create: {
-              description: 'Stella Mobil Kaca bagus',
-              price: 14262,
-              quantity: 50,
-            },
-          },
+          latestQuantity: 0,
         },
         {
           code: 'C2475B0',
           description: 'alat kendaraan bagus',
           name: 'Knalpot AHM',
-          latestQuantity: 50,
-          stocks: {
-            create: {
-              description: 'knalpot racing bagus',
-              price: 13262,
-              quantity: 50,
-            },
-          },
+          latestQuantity: 0,
         },
       ],
     },
@@ -142,27 +86,13 @@ export const categories = [
           code: 'A695DD2',
           description: 'alat kendaraan bagus',
           name: 'Minyak Kayu Putih',
-          latestQuantity: 50,
-          stocks: {
-            create: {
-              description: 'Minyak Kayu Putih bagus',
-              price: 13262,
-              quantity: 50,
-            },
-          },
+          latestQuantity: 0,
         },
         {
           code: 'C43234A',
           description: 'obat obatan bagus',
           name: 'Minyak Telon',
-          latestQuantity: 50,
-          stocks: {
-            create: {
-              description: 'Minyak Kayu Putih bagus',
-              price: 13262,
-              quantity: 50,
-            },
-          },
+          latestQuantity: 0,
         },
       ],
     },
@@ -175,27 +105,13 @@ export const categories = [
           code: 'CA5E421',
           description: 'alat listrik bagus',
           name: 'Bohlam LED',
-          latestQuantity: 50,
-          stocks: {
-            create: {
-              description: 'Bohlam LED bagus',
-              price: 13262,
-              quantity: 50,
-            },
-          },
+          latestQuantity: 0,
         },
         {
           code: 'AA3442',
           description: 'alat listrik bagus',
           name: 'Fuse tabung kaca',
-          latestQuantity: 50,
-          stocks: {
-            create: {
-              description: 'Bohlam LED bagus',
-              price: 13264,
-              quantity: 50,
-            },
-          },
+          latestQuantity: 0,
         },
       ],
     },
@@ -209,27 +125,13 @@ export const categories = [
           code: '4225E84',
           description: 'alat tulis kantor bagus',
           name: 'Pensil',
-          latestQuantity: 50,
-          stocks: {
-            create: {
-              description: 'Pensil bagus',
-              price: 13262,
-              quantity: 50,
-            },
-          },
+          latestQuantity: 0,
         },
         {
           code: '9D14499',
           description: 'alat tulis kantor bagus',
           name: 'Pulpen',
-          latestQuantity: 50,
-          stocks: {
-            create: {
-              description: 'Pensil bagus',
-              price: 13262,
-              quantity: 50,
-            },
-          },
+          latestQuantity: 0,
         },
       ],
     },
