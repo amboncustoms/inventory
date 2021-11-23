@@ -26,46 +26,12 @@ import axios from 'axios';
 import { useMutation, useQueryClient } from 'react-query';
 import Loading from '@src/components/Loading';
 import GeneralModal from '@src/components/modal/GeneralModal';
+import { CartNotifContext } from '@src/contexts/cartnotif';
 import { RevalidateContext } from '@src/contexts/revalidation';
 
-function setLocalStorage(key, value) {
-  try {
-    if (typeof window !== 'undefined') {
-      window.localStorage.setItem(key, JSON.stringify(value));
-    }
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error(err);
-  }
-}
-
-// eslint-disable-next-line consistent-return
-function getLocalStorage(key, initialValue) {
-  try {
-    if (typeof window !== 'undefined') {
-      const value = window.localStorage.getItem(key);
-      return value ? JSON.parse(value) : initialValue;
-    }
-    return initialValue;
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error(err);
-  }
-}
-// eslint-disable-next-line consistent-return
-function deleteLocalStorage(key: string) {
-  try {
-    if (typeof window !== 'undefined') {
-      window.localStorage.removeItem(key);
-    }
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error(err);
-  }
-}
-
 function renderAdjusment(props) {
-  const { cartNotifUpdate, latestQuantity, setCartNotifUpdate, id, productQuantity, setProductQuantity } = props;
+  const { cartNotifUpdate, setNewCart } = useContext(CartNotifContext);
+  const { latestQuantity, id, productQuantity, setProductQuantity } = props;
   const increase = () => {
     if (productQuantity >= latestQuantity) {
       setProductQuantity(productQuantity);
@@ -83,7 +49,7 @@ function renderAdjusment(props) {
 
   useEffect(() => {
     const updated = cartNotifUpdate?.map((c) => (c.id === id ? { ...c, productQuantity } : c));
-    setCartNotifUpdate(updated);
+    setNewCart(updated);
   }, [productQuantity]);
   return (
     <div
@@ -107,7 +73,7 @@ function renderAdjusment(props) {
 }
 
 function Row(props) {
-  const { cartNotifUpdate, item, idx, setCartNotifUpdate } = props;
+  const { item, idx } = props;
   const { id, productId, productCode, productName, productCategory, productQuantity: productIncart } = item;
   const [open, setOpen] = useState(false);
   const [productQuantity, setProductQuantity] = useState(productIncart);
@@ -123,8 +89,6 @@ function Row(props) {
   };
 
   const adjustmentProps = {
-    cartNotifUpdate,
-    setCartNotifUpdate,
     id,
     latestQuantity: product?.latestQuantity,
     setProductQuantity,
@@ -185,7 +149,7 @@ function Row(props) {
 
 export default function CollapsibleTable({ userId, setOpen, notifId }) {
   const [loading, setLoading] = useState(true);
-  const [cartNotifUpdate, setCartNotifUpdate] = useState(() => getLocalStorage('notif-cart', []));
+  const { cartNotifUpdate, setCartToEmpty, setCartNotifUpdate } = useContext(CartNotifContext);
   const queryClient = useQueryClient();
   const { setRevalidateStock } = useContext(RevalidateContext);
 
@@ -193,11 +157,8 @@ export default function CollapsibleTable({ userId, setOpen, notifId }) {
   const [openModalReject, setOpenModalReject] = useState(false);
 
   const updateNotifMutation = useMutation(
-    (id) => {
-      return axios.post(`/api/notifs/stockin/approval/${id}`, {
-        status: 'APPROVED',
-        description: 'KSBU Telah Menyetujui Penambahan Stok',
-      });
+    (value: any) => {
+      return axios.post(`/api/notifs/stockin/approval/${value.id}`, { value: value.notifCart });
     },
     {
       onSuccess: () => {
@@ -212,13 +173,15 @@ export default function CollapsibleTable({ userId, setOpen, notifId }) {
   };
 
   const handleApprove = async () => {
+    const notifCart = cartNotifUpdate.map((c) => {
+      return { id: c.id, quantity: c.productQuantity };
+    });
     try {
-      updateNotifMutation.mutate(notifId);
+      updateNotifMutation.mutate({ id: notifId, notifCart });
     } catch (err) {
       throw new Error(err);
     } finally {
-      setCartNotifUpdate([]);
-      deleteLocalStorage('notif-cart');
+      setCartToEmpty();
       setOpen(false);
     }
   };
@@ -235,10 +198,6 @@ export default function CollapsibleTable({ userId, setOpen, notifId }) {
     };
     setIncart();
   }, [notifId]);
-
-  useEffect(() => {
-    setLocalStorage('notif-cart', cartNotifUpdate);
-  }, [cartNotifUpdate]);
 
   return loading ? (
     <Loading />
@@ -257,7 +216,7 @@ export default function CollapsibleTable({ userId, setOpen, notifId }) {
             <FilterTiltShift style={{ color: 'white' }} />
           </Avatar>
         }
-        title="Detail Permohonan Barang"
+        title="Detail Pemasukan Barang"
       />
       <Paper
         style={{
@@ -291,15 +250,7 @@ export default function CollapsibleTable({ userId, setOpen, notifId }) {
             </TableHead>
             <TableBody>
               {cartNotifUpdate?.length !== 0 &&
-                cartNotifUpdate?.map((item, index) => (
-                  <Row
-                    key={item.id}
-                    item={item}
-                    idx={index}
-                    setCartNotifUpdate={setCartNotifUpdate}
-                    cartNotifUpdate={cartNotifUpdate}
-                  />
-                ))}
+                cartNotifUpdate?.map((item, index) => <Row key={item.id} item={item} idx={index} />)}
             </TableBody>
           </Table>
         </TableContainer>

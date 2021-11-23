@@ -9,6 +9,7 @@ export default handler()
   .use(auth)
   .post(async (req, res) => {
     const { id } = req.query;
+    const { value: notifCarts } = req.body;
     const { role } = req.user;
 
     try {
@@ -16,29 +17,31 @@ export default handler()
         throw new Error('FORBIDDEN');
       }
 
-      const notif = await prisma.notif.findFirst({
-        where: { id: id as string, type: 'STOCKIN', status: 'NOTHING' },
-        include: {
-          notifCarts: true,
-        },
-      });
+      notifCarts?.forEach(async (nc) => {
+        const realNc = await prisma.notifCart.findUnique({
+          where: {
+            id: nc.id,
+          },
+        });
 
-      notif.notifCarts.forEach(async (nc) => {
         const createdStock = await prisma.stock.create({
           data: {
-            description: nc.description,
-            price: nc.price,
-            productId: nc.productId,
-            quantity: nc.productQuantity,
+            description: realNc.description || null,
+            price: realNc.price,
+            productId: realNc.productId,
+            quantity: nc.quantity,
           },
         });
 
         if (createdStock) {
-          const product = await prisma.product.findUnique({ where: { id: nc.productId }, include: { stocks: true } });
+          const product = await prisma.product.findUnique({
+            where: { id: realNc.productId },
+            include: { stocks: true },
+          });
           const latestQuantity = Array.from(product.stocks, (q) => q.quantity).reduce((acc, a) => acc + a);
           await prisma.product.update({
             where: {
-              id: nc.productId,
+              id: realNc.productId,
             },
             data: {
               latestQuantity,

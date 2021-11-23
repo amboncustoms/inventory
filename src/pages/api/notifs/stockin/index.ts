@@ -41,28 +41,28 @@ export default handler()
             notifId: (await alreadyNotif).id,
           },
         });
+      } else {
+        const notif = await prisma.notif.create({
+          data: {
+            userId,
+            type: 'STOCKIN',
+            description: 'Permohonan Penambahan Stok',
+          },
+        });
+
+        await prisma.notifCart.create({
+          data: {
+            productId: product.id,
+            productCode: product.code,
+            productName: product.name,
+            productCategory: product.category.title,
+            productQuantity: quantity,
+            description,
+            price,
+            notifId: (await notif).id,
+          },
+        });
       }
-
-      const notif = await prisma.notif.create({
-        data: {
-          userId,
-          type: 'STOCKIN',
-          description: 'Permohonan Penambahan Stok',
-        },
-      });
-
-      await prisma.notifCart.create({
-        data: {
-          productId: product.id,
-          productCode: product.code,
-          productName: product.name,
-          productCategory: product.category.title,
-          productQuantity: quantity,
-          description,
-          price,
-          notifId: (await notif).id,
-        },
-      });
 
       return res.json({ message: 'Notif stockin created' });
     } catch (error) {

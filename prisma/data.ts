@@ -186,4 +186,10 @@ export const users = [
     fullname: 'Penindakan dan Penyidikan',
     role: Role.USER,
   },
+  {
+    username: 'kip',
+    password: '123',
+    fullname: 'Kepatuhan Internal dan Penyuluhan dan Layanan Informasi',
+    role: Role.USER,
+  },
 ];

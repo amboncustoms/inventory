@@ -112,13 +112,15 @@ const GeneralModal: FC<ModalProps> = ({
         throw new Error(err);
       })
       .finally(() => {
-        setIncartsUpdate([]);
         deleteLocalStorage('incarts');
         handleModalClose();
         setOpenApprovalPopper(false);
         queryClient.invalidateQueries('notifs');
         if (setCartNotifUpdate) {
           setCartNotifUpdate([]);
+        }
+        if (setIncartsUpdate) {
+          setIncartsUpdate([]);
         }
       });
   };
