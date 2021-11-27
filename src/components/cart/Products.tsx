@@ -6,9 +6,9 @@ import Link from 'next/link';
 import { useQueryClient, useMutation } from 'react-query';
 import { CartContext } from '@src/contexts/cart';
 import { ERule, Properties } from '@src/utils/types';
-import GeneralModal from '../modal/GeneralModal';
 import Product from './Product';
 
+const GeneralModal = dynamic(() => import('../modal/GeneralModal'));
 const Grid = dynamic(() => import('@mui/material/Grid'));
 const Typography = dynamic(() => import('@mui/material/Typography'), { ssr: false });
 const Divider = dynamic(() => import('@mui/material/Divider'));

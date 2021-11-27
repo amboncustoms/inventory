@@ -91,7 +91,7 @@ export default function Login() {
           paddingLeft: '10%',
         }}
       >
-        <Image width={80} height={80} src="/box.png" alt="main logo" />
+        <Image width={80} height={80} src="/images/boxicon.png" alt="main logo" />
         <Typography component="h1" variant="h5">
           Sign In
         </Typography>
