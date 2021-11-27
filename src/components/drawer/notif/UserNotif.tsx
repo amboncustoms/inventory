@@ -1,21 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Delete as DeleteIcon, CheckCircle, NotificationImportant } from '@mui/icons-material';
-import {
-  Card,
-  CardHeader,
-  Avatar,
-  CardActions,
-  IconButton,
-  Button,
-  Divider,
-  Dialog,
-  DialogContent,
-} from '@mui/material';
+import { Card, CardHeader, Avatar, CardActions, IconButton, Button, Divider } from '@mui/material';
 import axios from 'axios';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useMutation, useQueryClient } from 'react-query';
-import Loading from '@src/components/Loading';
-import NotifDetail from './NotifDetail';
+
+const Loading = dynamic(() => import('@src/components/Loading'));
+const NotifDetail = dynamic(() => import('./NotifDetail'));
+const Dialog = dynamic(() => import('@mui/material/Dialog'));
+const DialogContent = dynamic(() => import('@mui/material/DialogContent'));
 
 const UserNotif = ({ notif, isSuccess }) => {
   const { status, id: notifId, userId, user: notifUser, description } = notif;

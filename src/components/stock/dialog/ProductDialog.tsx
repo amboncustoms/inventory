@@ -1,26 +1,22 @@
 import React, { useState, useContext } from 'react';
 import { Summarize } from '@mui/icons-material';
-import {
-  Alert as MUIAlert,
-  AlertProps,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  Snackbar,
-  TextField as MUITextField,
-  Avatar,
-  CardHeader,
-} from '@mui/material';
+import { AlertProps, Button, TextField as MUITextField, Avatar, CardHeader } from '@mui/material';
 import axios from 'axios';
 import { Formik } from 'formik';
+import dynamic from 'next/dynamic';
 import { useMutation, useQueryClient } from 'react-query';
 import * as Yup from 'yup';
 import Select from '@src/components/FormUI/Select';
 import TextField from '@src/components/FormUI/TextField';
 import { CategoryContext } from '@src/contexts/category';
 import { RevalidateContext } from '@src/contexts/revalidation';
+
+const Dialog = dynamic(() => import('@mui/material/Dialog'));
+const DialogContent = dynamic(() => import('@mui/material/DialogContent'));
+const DialogActions = dynamic(() => import('@mui/material/DialogActions'));
+const DialogContentText = dynamic(() => import('@mui/material/DialogContentText'));
+const MUIAlert = dynamic(() => import('@mui/material/Alert'));
+const Snackbar = dynamic(() => import('@mui/material/Snackbar'));
 
 type ProductValue = {
   categoryId: string;

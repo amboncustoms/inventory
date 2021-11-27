@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 // icons
 import { Star } from '@mui/icons-material';
 import { Grid, Card, CardHeader, Avatar, Typography } from '@mui/material';
-import Loading from '../Loading';
+import dynamic from 'next/dynamic';
+
+const Loading = dynamic(() => import('../Loading'));
 
 const Popular = ({ stocks }) => {
   const [loading, setLoading] = useState(true);

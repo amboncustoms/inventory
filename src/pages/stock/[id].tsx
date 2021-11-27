@@ -17,24 +17,26 @@ import {
   TextField,
   Grid,
   IconButton,
-  Alert as MUIAlert,
-  Snackbar,
   AlertProps,
-  Popper,
   Card,
   CardContent,
   Box,
 } from '@mui/material';
-import { PrismaClient } from '@prisma/client';
 import axios from 'axios';
 import { add, format } from 'date-fns';
 import { verify } from 'jsonwebtoken';
 import { GetServerSideProps } from 'next';
-import Image from 'next/image';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import Loading from '@src/components/Loading';
 import { useAuthState } from '@src/contexts/auth';
 import { Properties } from '@src/utils/types';
+import prisma from 'db';
+
+const Loading = dynamic(() => import('@src/components/Loading'));
+const MUIAlert = dynamic(() => import('@mui/material/Alert'));
+const Snackbar = dynamic(() => import('@mui/material/Snackbar'));
+const Popper = dynamic(() => import('@mui/material/Popper'));
+const Image = dynamic(() => import('next/image'));
 
 const numberFormatterInRupiah = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' });
 const numberFormatter = new Intl.NumberFormat();
@@ -479,7 +481,6 @@ const Detail = () => {
 export default Detail;
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-  const prisma = new PrismaClient();
   try {
     const { cookie } = req.headers;
     if (!cookie) {

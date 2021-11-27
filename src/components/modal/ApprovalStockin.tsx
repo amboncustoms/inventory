@@ -23,12 +23,13 @@ import {
   Typography,
 } from '@mui/material';
 import axios from 'axios';
+import dynamic from 'next/dynamic';
 import { useMutation, useQueryClient } from 'react-query';
-import Loading from '@src/components/Loading';
-import GeneralModal from '@src/components/modal/GeneralModal';
 import { CartNotifContext } from '@src/contexts/cartnotif';
 import { RevalidateContext } from '@src/contexts/revalidation';
 
+const GeneralModal = dynamic(() => import('@src/components/modal/GeneralModal'));
+const Loading = dynamic(() => import('@src/components/Loading'));
 function renderAdjusment(props) {
   const { cartNotifUpdate, setNewCart } = useContext(CartNotifContext);
   const { latestQuantity, id, productQuantity, setProductQuantity } = props;

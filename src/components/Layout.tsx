@@ -1,9 +1,11 @@
 import React from 'react';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import CustomDrawer from '@src/components/drawer/CustomDrawer';
 import { NotifProvider } from '@src/contexts/notif';
 import { RuleProvider } from '@src/contexts/rule';
-import Footer from './Footer';
+
+const Footer = dynamic(() => import('./Footer'));
 
 type Props = {
   children: React.ReactNode;

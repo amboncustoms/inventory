@@ -1,9 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Block, AddBox, IndeterminateCheckBox } from '@mui/icons-material';
 import { Card, Typography, CardContent, CardActions, IconButton, Box, Paper } from '@mui/material';
-import Image from 'next/image';
+import dynamic from 'next/dynamic';
 import { CartContext } from '../../contexts/cart';
-import GeneralModal from '../modal/GeneralModal';
+
+const GeneralModal = dynamic(() => import('../modal/GeneralModal'));
+const Image = dynamic(() => import('next/image'));
 
 const Product = ({ productId, name, image, color, quantity, incart }) => {
   const { cart, setNewCart } = useContext(CartContext);

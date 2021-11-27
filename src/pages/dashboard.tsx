@@ -2,30 +2,24 @@ import React, { useState, useEffect } from 'react';
 import { BarChart, TrackChanges, Favorite } from '@mui/icons-material';
 import { LocalizationProvider, DatePicker } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import {
-  TextField,
-  Grid,
-  Paper,
-  CardHeader,
-  Avatar,
-  Box,
-  AlertProps,
-  Snackbar,
-  Alert as MUIAlert,
-} from '@mui/material';
-import { PrismaClient } from '@prisma/client';
+import { TextField, Grid, Paper, CardHeader, Avatar, Box, AlertProps } from '@mui/material';
 import axios from 'axios';
 import { format } from 'date-fns';
 import { verify } from 'jsonwebtoken';
 import { GetServerSideProps } from 'next';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import InfoCard from '@src/components/dashboard/InfoCard';
-import LineChart from '@src/components/dashboard/LineChart';
 import MobileAppbar from '@src/components/dashboard/MobileAppbar';
-import Popular from '@src/components/dashboard/Popular';
-import RadarChart from '@src/components/dashboard/RadarChart';
-import Loading from '@src/components/Loading';
 import { useAuthState } from '@src/contexts/auth';
+import prisma from 'db';
+
+const Loading = dynamic(() => import('@src/components/Loading'));
+const MUIAlert = dynamic(() => import('@mui/material/Alert'));
+const Snackbar = dynamic(() => import('@mui/material/Snackbar'));
+const InfoCard = dynamic(() => import('@src/components/dashboard/InfoCard'));
+const LineChart = dynamic(() => import('@src/components/dashboard/LineChart'));
+const RadarChart = dynamic(() => import('@src/components/dashboard/RadarChart'));
+const Popular = dynamic(() => import('@src/components/dashboard/Popular'));
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return <MUIAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -192,7 +186,6 @@ const Dashboard = () => {
 export default Dashboard;
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-  const prisma = new PrismaClient();
   try {
     const { cookie } = req.headers;
     if (!cookie) {

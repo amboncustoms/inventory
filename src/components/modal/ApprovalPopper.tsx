@@ -24,9 +24,11 @@ import {
   Typography,
 } from '@mui/material';
 import axios from 'axios';
+import dynamic from 'next/dynamic';
 import { useMutation, useQueryClient } from 'react-query';
-import Loading from '@src/components/Loading';
-import GeneralModal from '@src/components/modal/GeneralModal';
+
+const GeneralModal = dynamic(() => import('@src/components/modal/GeneralModal'));
+const Loading = dynamic(() => import('@src/components/Loading'));
 
 function setLocalStorage(key, value) {
   try {

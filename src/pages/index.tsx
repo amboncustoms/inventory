@@ -13,14 +13,16 @@ import {
 } from '@mui/material';
 import { verify } from 'jsonwebtoken';
 import { GetServerSideProps } from 'next';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import MobileAppbar from '@src/components/home/MobileAppbar';
 import Products from '@src/components/home/Products';
-import Loading from '@src/components/Loading';
 import { useAuthState } from '@src/contexts/auth';
 import { CategoryContext } from '@src/contexts/category';
 import { ProductContext } from '@src/contexts/product';
-import { PrismaClient } from '.prisma/client';
+import prisma from 'db';
+
+const Loading = dynamic(() => import('@src/components/Loading'));
 
 // icons
 
@@ -196,7 +198,6 @@ const gallery = () => {
 export default gallery;
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-  const prisma = new PrismaClient();
   try {
     const { cookie } = req.headers;
     if (!cookie) {

@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Box } from '@mui/material';
-// import * as chartjs from 'chart.js';
+import dynamic from 'next/dynamic';
 import { Line } from 'react-chartjs-2';
-import Loading from '../Loading';
+
+const Loading = dynamic(() => import('../Loading'));
 
 const categories = ['ATK', 'Kebersihan', 'Kendaraan', 'Komputer', 'Obat', 'Lain'];
 const colors = ['#006666', '#4d4dff', '#ff3333', '#ffa500', '#008000', '#883dbd'];

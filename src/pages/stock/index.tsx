@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import { Search, Category, PostAdd, Summarize } from '@mui/icons-material';
-import { Grid, Paper, InputBase, IconButton, ButtonGroup, Tooltip, Button, Box } from '@mui/material';
-import { PrismaClient } from '@prisma/client';
+import { Grid, Paper, InputBase, IconButton, ButtonGroup, Button, Box } from '@mui/material';
 import { verify } from 'jsonwebtoken';
 import { GetServerSideProps } from 'next';
-import CategoryDialog from '@src/components/stock/dialog/CategoryDialog';
-import ProductDialog from '@src/components/stock/dialog/ProductDialog';
-import StockDialog from '@src/components/stock/dialog/StockDialog';
+import dynamic from 'next/dynamic';
 import MobileAppbar from '@src/components/stock/MobileAppbar';
-import StockTable from '@src/components/stock/StockTable';
+import prisma from 'db';
+
+const CategoryDialog = dynamic(() => import('@src/components/stock/dialog/CategoryDialog'));
+const ProductDialog = dynamic(() => import('@src/components/stock/dialog/ProductDialog'));
+const StockDialog = dynamic(() => import('@src/components/stock/dialog/StockDialog'));
+const StockTable = dynamic(() => import('@src/components/stock/StockTable'));
+const Tooltip = dynamic(() => import('@mui/material/Tooltip'));
 
 const Stock = () => {
   const [openCategory, setOpenCategory] = useState(false);
@@ -110,7 +113,6 @@ const Stock = () => {
 export default Stock;
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-  const prisma = new PrismaClient();
   try {
     const { cookie } = req.headers;
     if (!cookie) {

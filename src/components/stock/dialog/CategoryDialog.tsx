@@ -1,22 +1,19 @@
 import React, { useState } from 'react';
 import { Category } from '@mui/icons-material';
-import {
-  Alert as MUIAlert,
-  AlertProps,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  Snackbar,
-  Avatar,
-  CardHeader,
-} from '@mui/material';
+import { AlertProps, Button, Avatar, CardHeader } from '@mui/material';
 import axios from 'axios';
 import { Formik } from 'formik';
+import dynamic from 'next/dynamic';
 import { useMutation, useQueryClient } from 'react-query';
 import * as Yup from 'yup';
 import TextField from '@src/components/FormUI/TextField';
+
+const Dialog = dynamic(() => import('@mui/material/Dialog'));
+const DialogContent = dynamic(() => import('@mui/material/DialogContent'));
+const DialogActions = dynamic(() => import('@mui/material/DialogActions'));
+const DialogContentText = dynamic(() => import('@mui/material/DialogContentText'));
+const MUIAlert = dynamic(() => import('@mui/material/Alert'));
+const Snackbar = dynamic(() => import('@mui/material/Snackbar'));
 
 const INITIAL_FORM_STATE = {
   title: '',

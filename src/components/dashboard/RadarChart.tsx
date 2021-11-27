@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Box } from '@mui/material';
+import dynamic from 'next/dynamic';
 import { Radar } from 'react-chartjs-2';
-import Loading from '../Loading';
+
+const Loading = dynamic(() => import('../Loading'));
 
 const categories = ['ATK', 'Kebersihan', 'Lain', 'Komputer', 'Obat', 'Kendaraan'];
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];

@@ -1,16 +1,18 @@
 import React, { useContext, useEffect } from 'react';
 import { Stepper, Step, StepLabel, Divider } from '@mui/material';
-import { PrismaClient } from '@prisma/client';
 import { verify } from 'jsonwebtoken';
 import { GetServerSideProps } from 'next';
+import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import Confirm from '@src/components/cart/Confirm';
 import Products from '@src/components/cart/Products';
-import Waiting from '@src/components/cart/Waiting';
 import { useAuthState } from '@src/contexts/auth';
 import { CartContext } from '@src/contexts/cart';
 import { RuleContext } from '@src/contexts/rule';
+import prisma from 'db';
+
+const Confirm = dynamic(() => import('@src/components/cart/Confirm'));
+const Waiting = dynamic(() => import('@src/components/cart/Waiting'));
 
 function getSteps() {
   return ['Mengajukan Permohonan', 'Menunggu Validasi RT', 'Konfirmasi Barang Diterima'];
@@ -82,7 +84,6 @@ const Cart = () => {
 
 export default Cart;
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-  const prisma = new PrismaClient();
   try {
     const { cookie } = req.headers;
     if (!cookie) {

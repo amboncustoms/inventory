@@ -1,26 +1,21 @@
 import React, { useState, useContext } from 'react';
 import { PostAdd } from '@mui/icons-material';
-import {
-  Alert as MUIAlert,
-  AlertProps,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  Snackbar,
-  TextField as MUITextField,
-  Autocomplete,
-  Avatar,
-  CardHeader,
-  DialogContentText,
-} from '@mui/material';
+import { AlertProps, Button, TextField as MUITextField, Autocomplete, Avatar, CardHeader } from '@mui/material';
 import axios from 'axios';
 import { Formik } from 'formik';
+import dynamic from 'next/dynamic';
 import { useMutation, useQueryClient } from 'react-query';
 import * as Yup from 'yup';
 import CurrencyFieldText, { handleValueChange } from '@src/components/FormUI/CurrencyField';
-import Loading from '@src/components/Loading';
 import { ProductContext } from '@src/contexts/product';
+
+const Dialog = dynamic(() => import('@mui/material/Dialog'));
+const DialogContent = dynamic(() => import('@mui/material/DialogContent'));
+const DialogActions = dynamic(() => import('@mui/material/DialogActions'));
+const Loading = dynamic(() => import('@src/components/Loading'));
+const DialogContentText = dynamic(() => import('@mui/material/DialogContentText'));
+const MUIAlert = dynamic(() => import('@mui/material/Alert'));
+const Snackbar = dynamic(() => import('@mui/material/Snackbar'));
 
 type StockValue = {
   description: string;

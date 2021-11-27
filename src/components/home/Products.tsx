@@ -1,9 +1,11 @@
 import React from 'react';
 import { Grid } from '@mui/material';
+import dynamic from 'next/dynamic';
 import { Product as TProduct, Properties } from '@src/utils/types';
-import Loading from '../Loading';
 // material ui
 import Product from './Product';
+
+const Loading = dynamic(() => import('@src/components/Loading'));
 
 const getProperties = (category) => {
   const properties: Properties = {

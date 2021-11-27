@@ -37,13 +37,13 @@ import { useAuthState } from '@src/contexts/auth';
 import { CartContext } from '@src/contexts/cart';
 import { NotifContext } from '@src/contexts/notif';
 import { RevalidateContext } from '@src/contexts/revalidation';
-import GeneralModal from '../modal/GeneralModal';
 import BottomNav from './bottomNavbar/BottomNav';
-import MenuPopper from './bottomNavbar/MenuPopper';
-import Notification from './notif';
 
 const IconButton = dynamic(() => import('@mui/material/IconButton'), { ssr: false });
 const Badge = dynamic(() => import('@mui/material/Badge'), { ssr: false });
+const Notification = dynamic(() => import('./notif'));
+const MenuPopper = dynamic(() => import('./bottomNavbar/MenuPopper'));
+const GeneralModal = dynamic(() => import('../modal/GeneralModal'));
 
 const drawerWidth = 240;
 

@@ -1,24 +1,18 @@
 import React, { useState, useEffect, useContext } from 'react';
-import {
-  Container,
-  Grid,
-  CssBaseline,
-  Typography,
-  Button,
-  Box,
-  Snackbar,
-  Alert as MUIAlert,
-  AlertProps,
-} from '@mui/material';
+import { Container, Grid, CssBaseline, Typography, Button, Box, AlertProps } from '@mui/material';
 import axios from 'axios';
 import { Formik } from 'formik';
-import Image from 'next/image';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { useMutation } from 'react-query';
 import * as Yup from 'yup';
 import TextField from '@src/components/FormUI/TextField';
 import { useAuthDispatch, useAuthState } from '@src/contexts/auth';
 import { RevalidateContext } from '@src/contexts/revalidation';
+
+const MUIAlert = dynamic(() => import('@mui/material/Alert'));
+const Snackbar = dynamic(() => import('@mui/material/Snackbar'));
+const Image = dynamic(() => import('next/image'));
 
 type LoginValue = {
   username: string;

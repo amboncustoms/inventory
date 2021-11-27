@@ -1,12 +1,14 @@
 import React, { useContext } from 'react';
 import { Close as CloseIcon, Info as InfoIcon } from '@mui/icons-material';
 import { CardActions, CardHeader, Button, Avatar } from '@mui/material';
-import Loading from '@src/components/Loading';
+import dynamic from 'next/dynamic';
 import { useAuthState } from '@src/contexts/auth';
 import { NotifContext } from '@src/contexts/notif';
-import AdminNotif from './AdminNotif';
-import StockinNotif from './StockinNotif';
-import UserNotif from './UserNotif';
+
+const Loading = dynamic(() => import('@src/components/Loading'));
+const AdminNotif = dynamic(() => import('./AdminNotif'));
+const StockinNotif = dynamic(() => import('./StockinNotif'));
+const UserNotif = dynamic(() => import('./UserNotif'));
 
 const Notification = ({ setOpenPopper }) => {
   const { notifs, isSuccess, isLoading } = useContext(NotifContext);

@@ -21,12 +21,14 @@ import {
   Button,
 } from '@mui/material';
 import axios from 'axios';
+import dynamic from 'next/dynamic';
 import { useMutation, useQueryClient } from 'react-query';
-import GeneralModal from '@src/components/modal/GeneralModal';
 import { useAuthState } from '@src/contexts/auth';
 import { CartContext } from '@src/contexts/cart';
 import { RuleContext } from '@src/contexts/rule';
 import { Notif } from '@src/utils/types';
+
+const GeneralModal = dynamic(() => import('@src/components/modal/GeneralModal'));
 
 const RenderAlert = ({ status, user }) => {
   return (

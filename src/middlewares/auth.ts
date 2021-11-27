@@ -1,9 +1,8 @@
 import { verify } from 'jsonwebtoken';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { NextHandler } from 'next-connect';
-import { PrismaClient } from '.prisma/client';
+import prisma from 'db';
 
-const prisma = new PrismaClient();
 export interface NextApiRequestExtended extends NextApiRequest {
   user: {
     userId: string | null;

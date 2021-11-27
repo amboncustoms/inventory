@@ -1,14 +1,18 @@
 import React, { useContext, useState } from 'react';
 import { Receipt } from '@mui/icons-material';
-import { Grid, Typography, Button, Snackbar, Alert as MUIAlert, AlertProps } from '@mui/material';
+import { Grid, Typography, Button, AlertProps } from '@mui/material';
 import axios from 'axios';
-import Image from 'next/image';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useAuthState } from '@src/contexts/auth';
 import { CartContext } from '@src/contexts/cart';
 import { NotifContext } from '@src/contexts/notif';
-import GeneralModal from '../modal/GeneralModal';
+
+const GeneralModal = dynamic(() => import('../modal/GeneralModal'));
+const MUIAlert = dynamic(() => import('@mui/material/Alert'));
+const Snackbar = dynamic(() => import('@mui/material/Snackbar'));
+const Image = dynamic(() => import('next/image'));
 
 const getIncart = async () => {
   const { data } = await axios.get('/api/incarts');
