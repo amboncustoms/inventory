@@ -1,12 +1,10 @@
 import React, { FC, useContext } from 'react';
 import { AddShoppingCart, Block } from '@mui/icons-material';
 import { Card, CardActions, CardContent, IconButton, Tooltip, Typography, Box, Divider } from '@mui/material';
-import dynamic from 'next/dynamic';
+import Image from 'next/image';
 import { CartContext } from '@src/contexts/cart';
 import { RuleContext } from '@src/contexts/rule';
 import { Properties, Product as TProduct } from '@src/utils/types';
-
-const Image = dynamic(() => import('next/image'));
 
 interface PropType {
   properties: Properties;

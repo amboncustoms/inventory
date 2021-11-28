@@ -3,6 +3,7 @@ import { Container, Grid, CssBaseline, Typography, Button, Box, AlertProps } fro
 import axios from 'axios';
 import { Formik } from 'formik';
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useMutation } from 'react-query';
 import * as Yup from 'yup';
@@ -12,7 +13,6 @@ import { RevalidateContext } from '@src/contexts/revalidation';
 
 const MUIAlert = dynamic(() => import('@mui/material/Alert'));
 const Snackbar = dynamic(() => import('@mui/material/Snackbar'));
-const Image = dynamic(() => import('next/image'));
 
 type LoginValue = {
   username: string;

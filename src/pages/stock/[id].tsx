@@ -27,6 +27,7 @@ import { add, format } from 'date-fns';
 import { verify } from 'jsonwebtoken';
 import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useAuthState } from '@src/contexts/auth';
 import { Properties } from '@src/utils/types';
@@ -36,7 +37,6 @@ const Loading = dynamic(() => import('@src/components/Loading'));
 const MUIAlert = dynamic(() => import('@mui/material/Alert'));
 const Snackbar = dynamic(() => import('@mui/material/Snackbar'));
 const Popper = dynamic(() => import('@mui/material/Popper'));
-const Image = dynamic(() => import('next/image'));
 
 const numberFormatterInRupiah = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' });
 const numberFormatter = new Intl.NumberFormat();
