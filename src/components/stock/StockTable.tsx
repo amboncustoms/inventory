@@ -17,6 +17,8 @@ import {
   Grid,
   TextField,
   AlertProps,
+  Snackbar,
+  Alert as MUIAlert,
 } from '@mui/material';
 import axios from 'axios';
 import { add } from 'date-fns';
@@ -28,8 +30,6 @@ import { RevalidateContext } from '@src/contexts/revalidation';
 const numberFormatterInRupiah = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' });
 const numberFormatter = new Intl.NumberFormat();
 
-const MUIAlert = dynamic(() => import('@mui/material/Alert'));
-const Snackbar = dynamic(() => import('@mui/material/Snackbar'));
 const Table = dynamic(() => import('@mui/material/Table'), { ssr: false });
 const Loading = dynamic(() => import('@src/components/Loading'));
 const Popper = dynamic(() => import('@mui/material/Popper'));

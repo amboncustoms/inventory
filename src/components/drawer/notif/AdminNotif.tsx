@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { NotificationsActive } from '@mui/icons-material';
-import { Card, CardHeader, Avatar, CardActions, Button, Divider } from '@mui/material';
+import { Card, CardHeader, Avatar, CardActions, Button, Divider, Dialog, DialogContent } from '@mui/material';
 import dynamic from 'next/dynamic';
 
 const ApprovalStockin = dynamic(() => import('@src/components/modal/ApprovalStockin'));
 const ApprovalPopper = dynamic(() => import('@src/components/modal/ApprovalPopper'));
-const Dialog = dynamic(() => import('@mui/material/Dialog'));
-const DialogContent = dynamic(() => import('@mui/material/DialogContent'));
 
 const AdminNotif = ({ notif }) => {
   const [open, setOpen] = useState(false);

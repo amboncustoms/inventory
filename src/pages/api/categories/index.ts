@@ -29,15 +29,18 @@ export default handler()
   .post(async (req, res) => {
     const { title }: Prisma.CategoryCreateInput = req.body;
     try {
-      const category = await prisma.category.findUnique({
+      const category = await prisma.category.findFirst({
         where: {
-          title,
+          title: {
+            equals: title,
+            mode: 'insensitive',
+          },
         },
       });
       if (!category) {
         const createdCategory = await prisma.category.create({
           data: {
-            title,
+            title: title.toLowerCase(),
           },
         });
         return res.json(createdCategory);

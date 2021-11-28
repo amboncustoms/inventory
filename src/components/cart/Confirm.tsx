@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { Receipt } from '@mui/icons-material';
-import { Grid, Typography, Button, AlertProps } from '@mui/material';
+import { Grid, Typography, Button, AlertProps, Snackbar, Alert as MUIAlert } from '@mui/material';
 import axios from 'axios';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
@@ -11,8 +11,6 @@ import { CartContext } from '@src/contexts/cart';
 import { NotifContext } from '@src/contexts/notif';
 
 const GeneralModal = dynamic(() => import('../modal/GeneralModal'));
-const MUIAlert = dynamic(() => import('@mui/material/Alert'));
-const Snackbar = dynamic(() => import('@mui/material/Snackbar'));
 
 const getIncart = async () => {
   const { data } = await axios.get('/api/incarts');

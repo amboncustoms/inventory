@@ -32,7 +32,7 @@ const SelectWrapper = ({ name, options, ...otherProps }) => {
       </MenuItem>
       {options?.map((item: any) => {
         return (
-          <MenuItem key={item.id} value={item.id}>
+          <MenuItem key={item.id} value={item.id} style={{ textTransform: 'capitalize' }}>
             {item.title}
           </MenuItem>
         );

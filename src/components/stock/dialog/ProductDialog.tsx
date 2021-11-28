@@ -1,22 +1,26 @@
 import React, { useState, useContext } from 'react';
 import { Summarize } from '@mui/icons-material';
-import { AlertProps, Button, TextField as MUITextField, Avatar, CardHeader } from '@mui/material';
+import {
+  AlertProps,
+  Button,
+  TextField as MUITextField,
+  Avatar,
+  CardHeader,
+  Snackbar,
+  Alert as MUIAlert,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+} from '@mui/material';
 import axios from 'axios';
 import { Formik } from 'formik';
-import dynamic from 'next/dynamic';
 import { useMutation, useQueryClient } from 'react-query';
 import * as Yup from 'yup';
 import Select from '@src/components/FormUI/Select';
 import TextField from '@src/components/FormUI/TextField';
 import { CategoryContext } from '@src/contexts/category';
 import { RevalidateContext } from '@src/contexts/revalidation';
-
-const Dialog = dynamic(() => import('@mui/material/Dialog'));
-const DialogContent = dynamic(() => import('@mui/material/DialogContent'));
-const DialogActions = dynamic(() => import('@mui/material/DialogActions'));
-const DialogContentText = dynamic(() => import('@mui/material/DialogContentText'));
-const MUIAlert = dynamic(() => import('@mui/material/Alert'));
-const Snackbar = dynamic(() => import('@mui/material/Snackbar'));
 
 type ProductValue = {
   categoryId: string;
@@ -111,7 +115,14 @@ export default function ProductDialog({ openProduct, setOpenProduct }) {
                   Input barang hanya dilakukan ketika barang belum pernah diinput sebelumya, jika sudah pernah diinput,
                   maka seharusnya cukup dengan tambah stok, dankee.
                 </DialogContentText>
-                <Select name="categoryId" fullWidth label="Kategori" options={isSuccess && categories} size="small" />
+                <Select
+                  name="categoryId"
+                  fullWidth
+                  label="Kategori"
+                  options={isSuccess && categories}
+                  size="small"
+                  style={{ textTransform: 'capitalize' }}
+                />
                 <TextField margin="normal" required fullWidth id="code" label="Kode Barang" name="code" size="small" />
                 <TextField margin="normal" required fullWidth id="name" label="Nama Barang" name="name" size="small" />
                 <MUITextField
