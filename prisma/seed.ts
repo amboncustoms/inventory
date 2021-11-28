@@ -1,5 +1,5 @@
 import { hash } from 'bcrypt';
-import { categories, users } from './data';
+import { users } from './data';
 import { PrismaClient } from '.prisma/client';
 
 const prisma = new PrismaClient();
@@ -8,12 +8,12 @@ async function main() {
   const hashed = async (password) => {
     return hash(password, 10);
   };
-  categories.forEach(async (category) => {
-    const cat = prisma.category.create({
-      data: category,
-    });
-    await prisma.$transaction([cat]);
-  });
+  // categories.forEach(async (category) => {
+  //   const cat = prisma.category.create({
+  //     data: category,
+  //   });
+  //   await prisma.$transaction([cat]);
+  // });
   users.forEach(async (user) => {
     const userCreated = await prisma.user.create({
       data: {
